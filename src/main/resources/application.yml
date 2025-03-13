@@ -1,0 +1,34 @@
+server:
+  port: 8003
+  servlet:
+    context-path: /api
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.159.128:3306/zhiqiong?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+#mybatis-plus配置
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  global-config:
+    db-config:
+      logic-delete-field: status  #逻辑删除字段
+      logic-delete-value: -1
+      logic-not-delete-value: 0
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    接口文档配置
+knife4j:
+  enable: true
+  openapi:
+    title: 接口文档
+    version: 1.0.0
+    group:
+      default:
+        api-rule: package
+        api-rule-resources:
+          - com.zhiqiong.controller
+logging:
+  level:
+    root: error
