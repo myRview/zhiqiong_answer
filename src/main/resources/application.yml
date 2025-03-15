@@ -3,11 +3,21 @@ server:
   servlet:
     context-path: /api
 spring:
+  #项目名称
+  application:
+    name: zhiqiong
   datasource:
     url: jdbc:mysql://192.168.159.128:3306/zhiqiong?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 123456
+  #redis配置
+  redis:
+    host: 192.168.159.128
+    port: 6379
+    password: root
+    database: 0
+    timeout: 3000
 #mybatis-plus配置
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml

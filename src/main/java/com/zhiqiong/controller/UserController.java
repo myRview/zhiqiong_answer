@@ -3,9 +3,11 @@ package com.zhiqiong.controller;
 
 import com.zhiqiong.common.ResponseResult;
 import com.zhiqiong.model.vo.IdVO;
+import com.zhiqiong.model.vo.LoginUserVO;
 import com.zhiqiong.model.vo.RegisterUserVO;
 import com.zhiqiong.model.vo.UserVO;
 import com.zhiqiong.service.UserService;
+import com.zhiqiong.utils.ThrowExceptionUtil;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -34,11 +36,34 @@ public class UserController {
         return register ? ResponseResult.success(register) : ResponseResult.fail();
     }
 
+    @PostMapping("/login")
+    @ApiOperation(value = "登录")
+    public ResponseResult login(@RequestBody LoginUserVO loginUserVO) {
+        String token = userService.login(loginUserVO);
+        return ResponseResult.success(token);
+    }
+
+
+    @PostMapping("/reset/pwd")
+    @ApiOperation(value = "重置密码")
+    public ResponseResult resetPassword(@RequestBody IdVO idVO) {
+         userService.resetPassword(idVO);
+         return ResponseResult.success();
+    }
+
+    @PostMapping("/update/pwd")
+    @ApiOperation(value = "修改密码")
+    public ResponseResult updatePassword(@RequestBody UserVO userVO) {
+        userService.updatePassword(userVO);
+        return ResponseResult.success();
+    }
+
+
 
     @PostMapping("/list")
     @ApiOperation(value = "根据条件获取用户")
-    public ResponseResult<List<UserVO>> selectList(@RequestParam(value = "userName", required = false) String userName,@RequestParam(value = "userRole", required = false) String userRole) {
-        List<UserVO> userVOList = userService.selectList(userName,userRole);
+    public ResponseResult<List<UserVO>> selectList(@RequestParam(value = "userName", required = false) String userName, @RequestParam(value = "userRole", required = false) String userRole) {
+        List<UserVO> userVOList = userService.selectList(userName, userRole);
         return ResponseResult.success(userVOList);
     }
 

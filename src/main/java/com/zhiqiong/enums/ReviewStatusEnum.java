@@ -12,7 +12,7 @@ public enum ReviewStatusEnum {
 
     REVIEW(0, "待审核"),
     PASS(1, "通过"),
-    TurnDown(2, "拒绝"),
+    REJECT(2, "拒绝"),
     ;
     private final int value;
     private final String description;
