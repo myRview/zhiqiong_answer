@@ -1,4 +1,4 @@
-package com.zhiqiong.model.vo;
+package com.zhiqiong.model.vo.user;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

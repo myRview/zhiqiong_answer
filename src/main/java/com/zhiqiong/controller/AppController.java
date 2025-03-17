@@ -2,11 +2,15 @@ package com.zhiqiong.controller;
 
 
 import com.zhiqiong.common.ResponseResult;
-import com.zhiqiong.model.vo.RegisterUserVO;
+import com.zhiqiong.model.vo.IdVO;
+import com.zhiqiong.model.vo.app.AppVO;
 import com.zhiqiong.service.AppService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -18,10 +22,53 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/app")
+@Api(tags = "应用管理")
 public class AppController {
     @Resource
     private AppService appService;
 
+    @GetMapping("/id")
+    @ApiOperation(value = "获取应用详情")
+    public ResponseResult<AppVO> selectAppInfo(@RequestParam(value = "id") Long id) {
+        AppVO appVO = appService.selectAppInfo(id);
+        return ResponseResult.success(appVO);
+    }
 
+    @GetMapping("/list")
+    @ApiOperation(value = "获取应用列表")
+    public ResponseResult<List<AppVO>> selectAppList(@RequestParam(value = "appName", required = false) String appName,
+                                                     @RequestParam(value = "reviewStatus", required = false) Integer reviewStatus) {
+        List<AppVO> appList = appService.selectAppList(appName, reviewStatus);
+        return ResponseResult.success(appList);
+    }
+
+    @GetMapping("/user/list")
+    @ApiOperation(value = "获取用户应用列表")
+    public ResponseResult<List<AppVO>> selectAppListByUser(@RequestParam(value = "userId") Long userId) {
+        List<AppVO> appList = appService.selectAppListByUser(userId);
+        return ResponseResult.success(appList);
+    }
+
+
+    @PostMapping("/add")
+    @ApiOperation(value = "添加应用")
+    public ResponseResult addApp(@RequestBody AppVO appVO) {
+        appService.addApp(appVO);
+        return ResponseResult.success();
+    }
+
+    @DeleteMapping("/delete")
+    @ApiOperation(value = "删除应用")
+    public ResponseResult deleteApp(@RequestBody IdVO idVO) {
+        appService.deleteApp(idVO);
+        return ResponseResult.success();
+    }
+
+    @PostMapping("/update")
+    @ApiOperation(value = "更新应用")
+    public ResponseResult updateApp(@RequestBody AppVO appVO) {
+        appService.updateApp(appVO);
+        return ResponseResult.success();
+    }
 
 }

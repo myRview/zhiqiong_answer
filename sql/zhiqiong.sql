@@ -140,3 +140,4 @@ INSERT INTO `zhiqiong`.`user` (`id`, `user_account`, `user_password`, `union_id`
                                `user_avatar`, `user_profile`, `user_role`, `create_time`, `update_time`, `status`)
 VALUES (1900160367981613058, 'admin', 'e10adc3949ba59abbe56e057f20f883e', NULL, NULL, '管理员', NULL, NULL, 'admin',
         '2025-03-13 12:21:56', '2025-03-13 12:23:26', 0);
+alter table  `app` add index  idx_review_status(review_status);

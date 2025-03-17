@@ -1,9 +1,11 @@
 package com.zhiqiong.utils;
 
+import com.zhiqiong.common.constant.TokenConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,7 +27,7 @@ public class JwtUtil {
     public static String createToken(Map<String, Object> claims) {
         String token = Jwts.builder()
                 .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, TOKEN_STRING_KEY)
+                .signWith(SignatureAlgorithm.HS256, TOKEN_STRING_KEY)
                 .compact();
         return token;
     }
@@ -44,8 +46,8 @@ public class JwtUtil {
      * @param token
      * @return
      */
-//    public static String getUserId(String token) {
-//        Claims claims = parseToken(token);
-//        return String.valueOf(claims.get(TokenConstants.USER_ID));
-//    }
+    public static String getUserId(String token) {
+        Claims claims = parseToken(token);
+        return String.valueOf(claims.get(TokenConstants.USER_ID));
+    }
 }

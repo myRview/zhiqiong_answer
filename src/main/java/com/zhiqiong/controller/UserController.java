@@ -3,16 +3,16 @@ package com.zhiqiong.controller;
 
 import com.zhiqiong.common.ResponseResult;
 import com.zhiqiong.model.vo.IdVO;
-import com.zhiqiong.model.vo.LoginUserVO;
-import com.zhiqiong.model.vo.RegisterUserVO;
-import com.zhiqiong.model.vo.UserVO;
+import com.zhiqiong.model.vo.user.LoginUserVO;
+import com.zhiqiong.model.vo.user.RegisterUserVO;
+import com.zhiqiong.model.vo.user.UserVO;
 import com.zhiqiong.service.UserService;
-import com.zhiqiong.utils.ThrowExceptionUtil;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -25,6 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user")
+@Api(tags = "用户管理")
 public class UserController {
     @Resource
     private UserService userService;
@@ -43,6 +44,13 @@ public class UserController {
         return ResponseResult.success(token);
     }
 
+    @PostMapping("/logout")
+    @ApiOperation(value = "退出登录")
+    public ResponseResult logout() {
+        userService.logout();
+        return ResponseResult.success();
+    }
+
 
     @PostMapping("/reset/pwd")
     @ApiOperation(value = "重置密码")
@@ -58,11 +66,18 @@ public class UserController {
         return ResponseResult.success();
     }
 
-
-
-    @PostMapping("/list")
+    @GetMapping("/id")
     @ApiOperation(value = "根据条件获取用户")
-    public ResponseResult<List<UserVO>> selectList(@RequestParam(value = "userName", required = false) String userName, @RequestParam(value = "userRole", required = false) String userRole) {
+    public ResponseResult<UserVO> getUserInfo(@RequestParam(value = "id")Long id) {
+        UserVO userVO = userService.getUserInfo(id);
+        return ResponseResult.success(userVO);
+    }
+
+
+    @GetMapping("/list")
+    @ApiOperation(value = "根据条件获取用户")
+    public ResponseResult<List<UserVO>> selectList(@RequestParam(value = "userName", required = false) String userName,
+                                                   @RequestParam(value = "userRole", required = false) String userRole) {
         List<UserVO> userVOList = userService.selectList(userName, userRole);
         return ResponseResult.success(userVOList);
     }

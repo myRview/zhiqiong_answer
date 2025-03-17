@@ -3,7 +3,10 @@ package com.zhiqiong.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhiqiong.model.entity.AppEntity;
-import com.zhiqiong.model.vo.RegisterUserVO;
+import com.zhiqiong.model.vo.IdVO;
+import com.zhiqiong.model.vo.app.AppVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,4 +19,15 @@ import com.zhiqiong.model.vo.RegisterUserVO;
 public interface AppService extends IService<AppEntity> {
 
 
+    AppVO selectAppInfo(Long id);
+
+    List<AppVO> selectAppList(String appName, Integer reviewStatus);
+
+    void addApp(AppVO appVO);
+
+    void deleteApp(IdVO idVO);
+
+    void updateApp(AppVO appVO);
+
+    List<AppVO> selectAppListByUser(Long userId);
 }

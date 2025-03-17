@@ -1,12 +1,9 @@
-package com.zhiqiong.model.vo;
+package com.zhiqiong.model.vo.app;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.zhiqiong.model.vo.user.UserVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -57,6 +54,9 @@ public class AppVO implements Serializable {
 
     @ApiModelProperty(value = "创建用户 id")
     private Long userId;
+
+    @ApiModelProperty(value = "创建用户")
+    private UserVO user;
 
 
 }

@@ -8,19 +8,19 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhiqiong.cache.RedisCacheManager;
 import com.zhiqiong.common.ErrorCode;
 import com.zhiqiong.common.constant.CacheConstants;
+import com.zhiqiong.common.constant.TokenConstants;
 import com.zhiqiong.common.constant.UserConstants;
 import com.zhiqiong.enums.UserRoleEnum;
 import com.zhiqiong.model.entity.UserEntity;
 import com.zhiqiong.mapper.UserMapper;
 import com.zhiqiong.model.vo.IdVO;
-import com.zhiqiong.model.vo.LoginUserVO;
-import com.zhiqiong.model.vo.RegisterUserVO;
-import com.zhiqiong.model.vo.UserVO;
+import com.zhiqiong.model.vo.user.LoginUserVO;
+import com.zhiqiong.model.vo.user.RegisterUserVO;
+import com.zhiqiong.model.vo.user.UserVO;
 import com.zhiqiong.service.UserService;
 import com.zhiqiong.utils.JwtUtil;
 import com.zhiqiong.utils.RandomNameUtil;
@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -48,6 +49,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     @Resource
     private RedisCacheManager redisCacheManager;
+
+    @Resource
+    private HttpServletRequest httpServletRequest;
 
 
     @Override
@@ -87,14 +91,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         //生成token
         HashMap<String, Object> map = new HashMap<>();
         Long userId = user.getId();
-        map.put("userId", userId);
-        map.put("user", user);
+        map.put(TokenConstants.USER_ID, userId);
         String token = JwtUtil.createToken(map);
 
         //TODO:  将token添加到缓存，设置过期时间，这里过期时间暂时固定，到时候完善成动态设置
         String key = CacheConstants.LOGIN_TOKEN_KEY + userId;
         redisCacheManager.setCacheValue(key, token, 30, TimeUnit.MINUTES);
         return token;
+    }
+
+    @Override
+    public void logout() {
+        String token = httpServletRequest.getHeader(TokenConstants.USER_TOKEN);
+        String userId = JwtUtil.getUserId(token);
+        String key = CacheConstants.LOGIN_TOKEN_KEY + userId;
+        redisCacheManager.delete(key);
     }
 
     @Override
@@ -134,10 +145,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public List<UserVO> selectList(String userName, String userRole) {
         LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(StrUtil.isNotBlank(userName), UserEntity::getUserName, userName);
+        queryWrapper.like(StrUtil.isNotBlank(userName), UserEntity::getUserName, userName);
         queryWrapper.eq(StrUtil.isNotBlank(userRole), UserEntity::getUserRole, userRole);
         List<UserEntity> list = this.baseMapper.selectList(queryWrapper);
         return this.converterVO(list);
+    }
+
+    @Override
+    public UserVO getUserInfo(Long userId) {
+        UserEntity user = this.getById(userId);
+        return converterVO(user);
+    }
+
+    @Override
+    public UserVO getCurrentUser() {
+        String token = httpServletRequest.getHeader(TokenConstants.USER_TOKEN);
+        String userId = JwtUtil.getUserId(token);
+        ThrowExceptionUtil.throwIf(StrUtil.isBlank(userId), ErrorCode.ERROR_PARAM, "用户未登录");
+        UserEntity user = this.getById(Long.valueOf(userId));
+        return converterVO(user);
     }
 
     @Override
@@ -184,24 +210,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
         LambdaUpdateWrapper<UserEntity> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.set(UserEntity::getUserAccount, userAccount);
-        if (StrUtil.isNotBlank(userVO.getUserName())) {
-            updateWrapper.set(UserEntity::getUserName, userVO.getUserName());
-        }
-        if (StrUtil.isNotBlank(userVO.getUserAvatar())) {
-            updateWrapper.set(UserEntity::getUserAvatar, userVO.getUserAvatar());
-        }
-        if (StrUtil.isNotBlank(userVO.getUserProfile())) {
-            updateWrapper.set(UserEntity::getUserProfile, userVO.getUserProfile());
-        }
-        if (StrUtil.isNotBlank(userVO.getUserRole())) {
-            updateWrapper.set(UserEntity::getUserRole, userVO.getUserRole());
-        }
-        if (StrUtil.isNotBlank(userVO.getMpOpenId())) {
-            updateWrapper.set(UserEntity::getMpOpenId, userVO.getMpOpenId());
-        }
-        if (StrUtil.isNotBlank(userVO.getUnionId())) {
-            updateWrapper.set(UserEntity::getUnionId, userVO.getUnionId());
-        }
+        updateWrapper.set(StrUtil.isNotBlank(userVO.getUserName()), UserEntity::getUserName, userVO.getUserName());
+        updateWrapper.set(StrUtil.isNotBlank(userVO.getUserAvatar()), UserEntity::getUserAvatar, userVO.getUserAvatar());
+        updateWrapper.set(StrUtil.isNotBlank(userVO.getUserProfile()), UserEntity::getUserProfile, userVO.getUserProfile());
+        updateWrapper.set(StrUtil.isNotBlank(userVO.getUserRole()), UserEntity::getUserRole, userVO.getUserRole());
+        updateWrapper.set(StrUtil.isNotBlank(userVO.getMpOpenId()), UserEntity::getMpOpenId, userVO.getMpOpenId());
+        updateWrapper.set(StrUtil.isNotBlank(userVO.getUnionId()), UserEntity::getUnionId, userVO.getUnionId());
         updateWrapper.eq(UserEntity::getId, id);
         boolean update = this.update(updateWrapper);
     }

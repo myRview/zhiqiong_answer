@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.Resource;
 
 /**
  * @author huangkun
@@ -15,6 +18,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class MyConfig implements WebMvcConfigurer {
 
+    @Resource
+    private JwtInterceptor jwtInterceptor;
 
     /**
      * 配置跨域
@@ -39,4 +44,13 @@ public class MyConfig implements WebMvcConfigurer {
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
+
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//            registry.addInterceptor(jwtInterceptor)
+//                    .addPathPatterns("/user/**")
+//                    .excludePathPatterns("/user/login");
+//    }
+
+
 }

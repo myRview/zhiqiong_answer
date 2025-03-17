@@ -4,9 +4,9 @@ package com.zhiqiong.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhiqiong.model.entity.UserEntity;
 import com.zhiqiong.model.vo.IdVO;
-import com.zhiqiong.model.vo.LoginUserVO;
-import com.zhiqiong.model.vo.RegisterUserVO;
-import com.zhiqiong.model.vo.UserVO;
+import com.zhiqiong.model.vo.user.LoginUserVO;
+import com.zhiqiong.model.vo.user.RegisterUserVO;
+import com.zhiqiong.model.vo.user.UserVO;
 
 import java.util.List;
 
@@ -35,4 +35,11 @@ public interface UserService extends IService<UserEntity> {
     void resetPassword(IdVO idVO);
 
     Boolean updatePassword(UserVO userVO);
+
+    UserVO getUserInfo(Long userId);
+
+    UserVO getCurrentUser();
+
+    void logout();
+
 }
