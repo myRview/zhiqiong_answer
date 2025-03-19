@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhiqiong.model.entity.AppEntity;
 import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.app.AppVO;
+import com.zhiqiong.model.vo.app.ReviewAppVO;
 
 import java.util.List;
 
@@ -30,4 +31,6 @@ public interface AppService extends IService<AppEntity> {
     void updateApp(AppVO appVO);
 
     List<AppVO> selectAppListByUser(Long userId);
+
+    boolean reviewApp(ReviewAppVO reviewAppVO);
 }

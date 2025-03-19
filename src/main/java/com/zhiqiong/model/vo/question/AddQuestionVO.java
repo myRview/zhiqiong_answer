@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -15,23 +16,16 @@ import java.io.Serializable;
  * @since 2025-03-13
  */
 @Data
-@ApiModel(value="QuestionVO对象", description="题目表")
-public class QuestionVO implements Serializable {
+@ApiModel(value = "QuestionVO对象")
+public class AddQuestionVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "id")
-    private Long id;
-
-    @ApiModelProperty(value = "题目内容（json格式）")
-    private String questionContent;
+    @ApiModelProperty(value = "题目列表")
+    private List<TopicVO> topicVOList;
 
     @ApiModelProperty(value = "应用 id")
     private Long appId;
-
-    @ApiModelProperty(value = "创建用户 id")
-    private Long userId;
-
 
 
 }

@@ -15,6 +15,7 @@ import com.zhiqiong.common.constant.CacheConstants;
 import com.zhiqiong.common.constant.TokenConstants;
 import com.zhiqiong.common.constant.UserConstants;
 import com.zhiqiong.enums.UserRoleEnum;
+import com.zhiqiong.exception.BusinessException;
 import com.zhiqiong.model.entity.UserEntity;
 import com.zhiqiong.mapper.UserMapper;
 import com.zhiqiong.model.vo.IdVO;
@@ -160,8 +161,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public UserVO getCurrentUser() {
         String token = httpServletRequest.getHeader(TokenConstants.USER_TOKEN);
-        String userId = JwtUtil.getUserId(token);
-        ThrowExceptionUtil.throwIf(StrUtil.isBlank(userId), ErrorCode.ERROR_PARAM, "用户未登录");
+        String userId = null;
+        try {
+            userId = JwtUtil.getUserId(token);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.ERROR_PARAM, "用户未登录");
+        }
         UserEntity user = this.getById(Long.valueOf(userId));
         return converterVO(user);
     }

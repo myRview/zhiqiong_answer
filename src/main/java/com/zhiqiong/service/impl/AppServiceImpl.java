@@ -13,15 +13,14 @@ import com.zhiqiong.model.entity.AppEntity;
 import com.zhiqiong.mapper.AppMapper;
 import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.app.AppVO;
+import com.zhiqiong.model.vo.app.ReviewAppVO;
 import com.zhiqiong.model.vo.user.UserVO;
 import com.zhiqiong.service.AppService;
 import com.zhiqiong.service.UserService;
-import com.zhiqiong.utils.JwtUtil;
 import com.zhiqiong.utils.ThrowExceptionUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -102,6 +101,29 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
         LambdaQueryWrapper<AppEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AppEntity::getUserId, userId);
         return converterVo(this.list(queryWrapper));
+    }
+
+    @Override
+    public boolean reviewApp(ReviewAppVO reviewAppVO) {
+        String reviewMessage = reviewAppVO.getReviewMessage();
+        Integer reviewStatus = reviewAppVO.getReviewStatus();
+        Long appId = reviewAppVO.getAppId();
+
+        AppEntity app = this.getById(appId);
+        ThrowExceptionUtil.throwIf(app == null, ErrorCode.ERROR_PARAM, "应用id错误");
+
+        ReviewStatusEnum anEnum = ReviewStatusEnum.getEnumByValue(reviewStatus);
+        ThrowExceptionUtil.throwIf(anEnum == null, ErrorCode.ERROR_PARAM, "审核状态错误");
+
+        UserVO user = userService.getCurrentUser();
+
+        LambdaUpdateWrapper<AppEntity> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.set(AppEntity::getReviewStatus, reviewStatus);
+        updateWrapper.set(AppEntity::getReviewMessage, reviewMessage);
+        updateWrapper.set(AppEntity::getReviewerId, user.getId());
+        updateWrapper.set(AppEntity::getReviewTime, new Date());
+        updateWrapper.eq(AppEntity::getId, appId);
+        return this.update(updateWrapper);
     }
 
     private AppVO converterVo(AppEntity app) {

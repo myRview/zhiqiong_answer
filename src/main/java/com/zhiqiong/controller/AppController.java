@@ -4,6 +4,7 @@ package com.zhiqiong.controller;
 import com.zhiqiong.common.ResponseResult;
 import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.app.AppVO;
+import com.zhiqiong.model.vo.app.ReviewAppVO;
 import com.zhiqiong.service.AppService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -69,6 +70,14 @@ public class AppController {
     public ResponseResult updateApp(@RequestBody AppVO appVO) {
         appService.updateApp(appVO);
         return ResponseResult.success();
+    }
+
+
+    @PostMapping("/review")
+    @ApiOperation(value = "审核应用")
+    public ResponseResult<Boolean> reviewApp(@RequestBody ReviewAppVO reviewAppVO) {
+        boolean update = appService.reviewApp(reviewAppVO);
+        return ResponseResult.success(update);
     }
 
 }
