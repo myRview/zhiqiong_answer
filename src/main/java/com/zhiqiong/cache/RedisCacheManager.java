@@ -1,10 +1,16 @@
 package com.zhiqiong.cache;
 
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.BoundSetOperations;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -211,8 +217,8 @@ public class RedisCacheManager {
      * @param hKeys Hash键集合
      * @return Hash对象集合
      */
-    public  List<Object> getMultiCacheMapValue(final String key, final Collection<Object> hKeys) {
-       return stringRedisTemplate.opsForHash().multiGet(key, hKeys);
+    public List<Object> getMultiCacheMapValue(final String key, final Collection<Object> hKeys) {
+        return stringRedisTemplate.opsForHash().multiGet(key, hKeys);
     }
 
     /**

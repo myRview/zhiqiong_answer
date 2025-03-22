@@ -1,14 +1,11 @@
 package com.zhiqiong.model.vo.question;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -56,6 +53,9 @@ public class UserAnswerVO implements Serializable {
 
     @ApiModelProperty(value = "用户 id")
     private Long userId;
+
+    @ApiModelProperty(value="用户答案")
+    private List<String> choicesResult;
 
 
 

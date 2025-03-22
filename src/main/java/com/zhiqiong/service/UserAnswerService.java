@@ -3,6 +3,7 @@ package com.zhiqiong.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhiqiong.model.entity.UserAnswerEntity;
+import com.zhiqiong.model.vo.question.UserAnswerVO;
 
 /**
  * <p>
@@ -13,5 +14,9 @@ import com.zhiqiong.model.entity.UserAnswerEntity;
  * @since 2025-03-12
  */
 public interface UserAnswerService extends IService<UserAnswerEntity> {
+
+    UserAnswerVO selectAnswerListByApp(Long appId, Long userId);
+
+    void submitAnswer(UserAnswerVO userAnswerVO);
 
 }

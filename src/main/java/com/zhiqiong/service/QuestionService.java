@@ -29,4 +29,6 @@ public interface QuestionService extends IService<QuestionEntity> {
     TopicVO selectTopicInfo(Long id);
 
     boolean updateTopic(TopicVO topicVO);
+
+    void deleteByAppId(Long appId);
 }

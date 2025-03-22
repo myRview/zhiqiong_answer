@@ -95,6 +95,13 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, QuestionEnt
                 .update();
     }
 
+    @Override
+    public void deleteByAppId(Long appId) {
+        LambdaQueryWrapper<QuestionEntity> query = new LambdaQueryWrapper<>();
+        query.eq(QuestionEntity::getAppId, appId);
+        this.remove(query);
+    }
+
     private List<TopicVO> converterVO(List<QuestionEntity> questionEntities) {
         if (CollectionUtil.isEmpty(questionEntities)) return CollectionUtil.newArrayList();
         return questionEntities.stream().map(this::converterVO).collect(Collectors.toList());

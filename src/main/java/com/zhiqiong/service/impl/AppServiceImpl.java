@@ -16,9 +16,12 @@ import com.zhiqiong.model.vo.app.AppVO;
 import com.zhiqiong.model.vo.app.ReviewAppVO;
 import com.zhiqiong.model.vo.user.UserVO;
 import com.zhiqiong.service.AppService;
+import com.zhiqiong.service.QuestionService;
 import com.zhiqiong.service.UserService;
 import com.zhiqiong.utils.ThrowExceptionUtil;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -38,6 +41,9 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
 
     @Resource
     private UserService userService;
+    @Resource
+    @Lazy
+    private QuestionService questionService;
 
 
     @Override
@@ -69,9 +75,12 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
         this.save(app);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteApp(IdVO idVO) {
-        this.removeById(idVO.getId());
+        Long id = idVO.getId();
+        this.removeById(id);
+        questionService.deleteByAppId(id);
     }
 
     @Override

@@ -1,9 +1,13 @@
 package com.zhiqiong.controller;
 
 
+import com.zhiqiong.service.ScoringResultService;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -15,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/scoring/result")
+@Api(tags = "评分结果")
 public class ScoringResultController {
+    @Resource
+    private ScoringResultService scoringResultService;
 
 }

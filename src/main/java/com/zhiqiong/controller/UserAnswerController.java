@@ -1,9 +1,16 @@
 package com.zhiqiong.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.zhiqiong.common.ResponseResult;
+import com.zhiqiong.model.vo.IdVO;
+import com.zhiqiong.model.vo.question.UserAnswerVO;
+import com.zhiqiong.service.UserAnswerService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -15,6 +22,32 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/user/answer")
+@Api(tags = "用户答题记录")
 public class UserAnswerController {
+
+    @Resource
+    private UserAnswerService userAnswerService;
+
+    @GetMapping("/list")
+    @ApiOperation(value = "获取用户答案")
+    public ResponseResult<UserAnswerVO> selectAnswerListByApp(@RequestParam(value = "appId") Long appId, @RequestParam(value = "userId") Long userId) {
+        UserAnswerVO answerVO = userAnswerService.selectAnswerListByApp(appId, userId);
+        return ResponseResult.success(answerVO);
+    }
+
+
+    @PostMapping("/submit")
+    @ApiOperation(value = "提交答案")
+    public ResponseResult<?> submitAnswer(@RequestBody UserAnswerVO userAnswerVO) {
+        userAnswerService.submitAnswer(userAnswerVO);
+        return ResponseResult.success();
+    }
+
+    @DeleteMapping("/delete")
+    @ApiOperation(value = "删除答案")
+    public ResponseResult<?> deleteAnswer(@RequestBody IdVO idVO) {
+        userAnswerService.removeById(idVO.getId());
+        return ResponseResult.success();
+    }
 
 }
