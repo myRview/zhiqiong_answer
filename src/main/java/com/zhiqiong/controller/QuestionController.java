@@ -3,9 +3,10 @@ package com.zhiqiong.controller;
 
 import com.zhiqiong.common.ResponseResult;
 import com.zhiqiong.model.vo.IdVO;
+import com.zhiqiong.model.vo.question.AIGeneratorRequestVO;
 import com.zhiqiong.model.vo.question.AddQuestionVO;
-import com.zhiqiong.model.vo.question.QuestionVO;
 import com.zhiqiong.model.vo.question.TopicVO;
+import com.zhiqiong.manager.AIService;
 import com.zhiqiong.service.QuestionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +30,8 @@ public class QuestionController {
     
     @Resource
     private QuestionService questionService;
+    @Resource
+    private AIService aiService;
 
 
     @GetMapping("/id")
@@ -65,6 +68,14 @@ public class QuestionController {
     public ResponseResult<Boolean> updateQuestion(@RequestBody TopicVO topicVO) {
         boolean update = questionService.updateTopic(topicVO);
         return ResponseResult.success(update);
+    }
+
+
+    @PostMapping("/generator")
+    @ApiOperation(value = "AI生成题目")
+    public ResponseResult< List<TopicVO>> updateQuestion(@RequestBody AIGeneratorRequestVO requestVO) {
+        List<TopicVO> topics = aiService.generateQuestion(requestVO);
+        return ResponseResult.success(topics);
     }
 
 }

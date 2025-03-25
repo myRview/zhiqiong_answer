@@ -13,6 +13,7 @@ import com.zhiqiong.model.entity.AppEntity;
 import com.zhiqiong.mapper.AppMapper;
 import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.app.AppVO;
+import com.zhiqiong.model.vo.app.OperateAppVO;
 import com.zhiqiong.model.vo.app.ReviewAppVO;
 import com.zhiqiong.model.vo.user.UserVO;
 import com.zhiqiong.service.AppService;
@@ -62,11 +63,12 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
         LambdaQueryWrapper<AppEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.like(StrUtil.isNotBlank(appName), AppEntity::getAppName, appName);
         queryWrapper.eq(reviewStatus != null, AppEntity::getReviewStatus, reviewStatus);
+        queryWrapper.orderByDesc(AppEntity::getId);
         return converterVo(this.list(queryWrapper));
     }
 
     @Override
-    public void addApp(AppVO appVO) {
+    public void addApp(OperateAppVO appVO) {
         AppEntity app = new AppEntity();
         BeanUtil.copyProperties(appVO, app);
         app.setReviewStatus(ReviewStatusEnum.REVIEW.getValue());
@@ -84,7 +86,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
     }
 
     @Override
-    public void updateApp(AppVO appVO) {
+    public void updateApp(OperateAppVO appVO) {
         Long id = appVO.getId();
         String appName = appVO.getAppName();
         String appDesc = appVO.getAppDesc();
@@ -109,6 +111,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
     public List<AppVO> selectAppListByUser(Long userId) {
         LambdaQueryWrapper<AppEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AppEntity::getUserId, userId);
+        queryWrapper.orderByDesc(AppEntity::getId);
         return converterVo(this.list(queryWrapper));
     }
 

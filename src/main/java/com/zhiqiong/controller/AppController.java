@@ -4,6 +4,7 @@ package com.zhiqiong.controller;
 import com.zhiqiong.common.ResponseResult;
 import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.app.AppVO;
+import com.zhiqiong.model.vo.app.OperateAppVO;
 import com.zhiqiong.model.vo.app.ReviewAppVO;
 import com.zhiqiong.service.AppService;
 import io.swagger.annotations.Api;
@@ -53,7 +54,7 @@ public class AppController {
 
     @PostMapping("/add")
     @ApiOperation(value = "添加应用")
-    public ResponseResult addApp(@RequestBody AppVO appVO) {
+    public ResponseResult addApp(@RequestBody OperateAppVO appVO) {
         appService.addApp(appVO);
         return ResponseResult.success();
     }
@@ -67,8 +68,8 @@ public class AppController {
 
     @PostMapping("/update")
     @ApiOperation(value = "更新应用")
-    public ResponseResult updateApp(@RequestBody AppVO appVO) {
-        appService.updateApp(appVO);
+    public ResponseResult updateApp(@RequestBody OperateAppVO updateVO) {
+        appService.updateApp(updateVO);
         return ResponseResult.success();
     }
 

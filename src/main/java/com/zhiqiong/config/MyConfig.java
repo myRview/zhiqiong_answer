@@ -3,6 +3,8 @@ package com.zhiqiong.config;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.zhipu.oapi.ClientV4;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -51,6 +53,14 @@ public class MyConfig implements WebMvcConfigurer {
 //                    .addPathPatterns("/user/**")
 //                    .excludePathPatterns("/user/login");
 //    }
+
+    @Bean
+    public ClientV4 clientV4(@Value("${oapi.key}") String key){
+        ClientV4 client = new ClientV4
+                .Builder(key)
+                .build();
+        return client;
+    }
 
 
 }

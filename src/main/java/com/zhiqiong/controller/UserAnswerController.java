@@ -30,9 +30,9 @@ public class UserAnswerController {
 
     @GetMapping("/list")
     @ApiOperation(value = "获取用户答案")
-    public ResponseResult<UserAnswerVO> selectAnswerListByApp(@RequestParam(value = "appId") Long appId, @RequestParam(value = "userId") Long userId) {
-        UserAnswerVO answerVO = userAnswerService.selectAnswerListByApp(appId, userId);
-        return ResponseResult.success(answerVO);
+    public ResponseResult<List<UserAnswerVO>> selectAnswerListByApp(@RequestParam(value = "appId") Long appId, @RequestParam(value = "userId") Long userId) {
+        List<UserAnswerVO> answerList = userAnswerService.selectAnswerListByApp(appId, userId);
+        return ResponseResult.success(answerList);
     }
 
 

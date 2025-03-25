@@ -38,7 +38,7 @@ public class ScoringResultEntity implements Serializable {
     @ApiModelProperty(value = "结果图片")
     private String resultPicture;
 
-    @ApiModelProperty(value = "结果属性集合 JSON，如 [I,S,T,J]")
+    @ApiModelProperty(value = "结果属性")
     private String resultProp;
 
     @ApiModelProperty(value = "结果得分范围，如 80，表示 80及以上的分数命中此结果")

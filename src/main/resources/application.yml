@@ -3,7 +3,9 @@ server:
   servlet:
     context-path: /api
 spring:
-  #项目名称
+  profiles:
+    active: dev
+#  #项目名称
   application:
     name: zhiqiong
   datasource:
@@ -39,6 +41,8 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.zhiqiong.controller
+oapi:
+  key: xxxxxxxxx   #换成自己的 oapi key
 logging:
   level:
     root: error

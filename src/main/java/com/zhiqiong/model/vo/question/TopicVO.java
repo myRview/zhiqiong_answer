@@ -21,5 +21,5 @@ public class TopicVO {
     private String title;
 
     @ApiModelProperty(value = "选项列表")
-    private List<OptionVO> optionVOList;
+    private List<OptionVO> options;
 }

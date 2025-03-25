@@ -27,3 +27,4 @@ replay_pid*
 target/*
 #*.properties
 src/test/*
+application-dev.yml

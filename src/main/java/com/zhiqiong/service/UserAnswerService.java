@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhiqiong.model.entity.UserAnswerEntity;
 import com.zhiqiong.model.vo.question.UserAnswerVO;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户答题记录 服务类
@@ -15,7 +17,7 @@ import com.zhiqiong.model.vo.question.UserAnswerVO;
  */
 public interface UserAnswerService extends IService<UserAnswerEntity> {
 
-    UserAnswerVO selectAnswerListByApp(Long appId, Long userId);
+    List<UserAnswerVO> selectAnswerListByApp(Long appId, Long userId);
 
     void submitAnswer(UserAnswerVO userAnswerVO);
 
