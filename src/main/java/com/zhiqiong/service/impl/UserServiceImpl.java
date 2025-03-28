@@ -8,6 +8,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhiqiong.cache.RedisCacheManager;
 import com.zhiqiong.common.ErrorCode;
@@ -21,6 +23,7 @@ import com.zhiqiong.mapper.UserMapper;
 import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.user.LoginUserVO;
 import com.zhiqiong.model.vo.user.RegisterUserVO;
+import com.zhiqiong.model.vo.user.UserPageVO;
 import com.zhiqiong.model.vo.user.UserVO;
 import com.zhiqiong.service.UserService;
 import com.zhiqiong.utils.JwtUtil;
@@ -165,8 +168,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         try {
             userId = JwtUtil.getUserId(token);
         } catch (Exception e) {
-            throw new BusinessException(ErrorCode.ERROR_PARAM, "用户未登录");
+            throw new BusinessException(ErrorCode.NOT_LOGIN, "用户未登录");
         }
+        String key = CacheConstants.LOGIN_TOKEN_KEY + userId;
+        token = redisCacheManager.getCacheValue(key);
+        ThrowExceptionUtil.throwIf(StrUtil.isBlank(token), ErrorCode.NOT_LOGIN, "用户未登录");
+        redisCacheManager.setCacheValue(key, token, 30, TimeUnit.MINUTES);
         UserEntity user = this.getById(Long.valueOf(userId));
         return converterVO(user);
     }
@@ -174,8 +181,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public void addUser(UserVO userVO) {
         String userAccount = userVO.getUserAccount();
-        String password = userVO.getPassword();
-        ThrowExceptionUtil.throwIf(StrUtil.hasBlank(userAccount, password), ErrorCode.ERROR_PARAM, "账号或密码不能为空");
+//        String password = userVO.getPassword();
+        ThrowExceptionUtil.throwIf(StrUtil.hasBlank(userAccount), ErrorCode.ERROR_PARAM, "账号不能为空");
 
         checkExistUser(userAccount, null);
 
@@ -191,7 +198,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         UserEntity userEntity = new UserEntity();
         BeanUtil.copyProperties(userVO, userEntity);
 
-        String md5Hex = DigestUtil.md5Hex(password);
+        String md5Hex = DigestUtil.md5Hex(UserConstants.USER_PASSWORD);
         userEntity.setUserPassword(md5Hex);
         userEntity.setUserRole(userRole);
         this.save(userEntity);
@@ -223,6 +230,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         updateWrapper.set(StrUtil.isNotBlank(userVO.getUnionId()), UserEntity::getUnionId, userVO.getUnionId());
         updateWrapper.eq(UserEntity::getId, id);
         boolean update = this.update(updateWrapper);
+    }
+
+    @Override
+    public Page<UserVO> selectPage(UserPageVO userPageVO) {
+        String userName = userPageVO.getUserName();
+        String userAccount = userPageVO.getUserAccount();
+        String userRole = userPageVO.getUserRole();
+        Integer pageNum = userPageVO.getPageNum();
+        Integer pageSize = userPageVO.getPageSize();
+        pageNum = pageNum == null ? 1 : pageNum;
+        pageSize = pageSize == null ? 10 : pageSize;
+        LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(StrUtil.isNotBlank(userName), UserEntity::getUserName, userName);
+        queryWrapper.like(StrUtil.isNotBlank(userAccount), UserEntity::getUserAccount, userAccount);
+        queryWrapper.eq(StrUtil.isNotBlank(userRole), UserEntity::getUserRole, userRole);
+        IPage<UserEntity> page = this.page(new Page<>(pageNum, pageSize), queryWrapper);
+        Page<UserVO> pageResult = new Page<>(pageNum, pageSize,page.getTotal());
+        pageResult.setRecords(converterVO(page.getRecords()));
+        return pageResult;
+    }
+
+    @Override
+    public List<UserVO> selectUserInfoBatch(List<Long> userIds) {
+        List<UserEntity> list = this.listByIds(userIds);
+        return converterVO(list);
     }
 
     private List<UserVO> converterVO(List<UserEntity> list) {

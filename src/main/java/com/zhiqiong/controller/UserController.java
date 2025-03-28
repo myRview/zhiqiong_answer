@@ -1,10 +1,12 @@
 package com.zhiqiong.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhiqiong.common.ResponseResult;
 import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.user.LoginUserVO;
 import com.zhiqiong.model.vo.user.RegisterUserVO;
+import com.zhiqiong.model.vo.user.UserPageVO;
 import com.zhiqiong.model.vo.user.UserVO;
 import com.zhiqiong.service.UserService;
 import io.swagger.annotations.Api;
@@ -25,7 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user")
-@Api(tags = "用户管理")
+//@Api(tags = "用户管理")
 public class UserController {
     @Resource
     private UserService userService;
@@ -39,9 +41,9 @@ public class UserController {
 
     @PostMapping("/login")
     @ApiOperation(value = "登录")
-    public ResponseResult login(@RequestBody LoginUserVO loginUserVO) {
+    public ResponseResult<?> login(@RequestBody LoginUserVO loginUserVO) {
         String token = userService.login(loginUserVO);
-        return ResponseResult.success(token);
+        return ResponseResult.success(token,"登录成功");
     }
 
     @PostMapping("/logout")
@@ -67,7 +69,7 @@ public class UserController {
     }
 
     @GetMapping("/id")
-    @ApiOperation(value = "根据条件获取用户")
+    @ApiOperation(value = "根据id获取用户")
     public ResponseResult<UserVO> getUserInfo(@RequestParam(value = "id")Long id) {
         UserVO userVO = userService.getUserInfo(id);
         return ResponseResult.success(userVO);
@@ -80,6 +82,13 @@ public class UserController {
                                                    @RequestParam(value = "userRole", required = false) String userRole) {
         List<UserVO> userVOList = userService.selectList(userName, userRole);
         return ResponseResult.success(userVOList);
+    }
+
+    @PostMapping("/page")
+    @ApiOperation(value = "分页获取用户")
+    public ResponseResult<Page<UserVO>> selectPage(@RequestBody UserPageVO userPageVO) {
+        Page<UserVO> page = userService.selectPage(userPageVO);
+        return ResponseResult.success(page);
     }
 
     @PostMapping("/add")
@@ -101,6 +110,13 @@ public class UserController {
     public ResponseResult updateUser(@RequestBody UserVO userVO) {
         userService.updateUser(userVO);
         return ResponseResult.success();
+    }
+
+    @PostMapping("/get/current")
+    @ApiOperation(value = "获取当前登录用户")
+    public ResponseResult<UserVO> getCurrentUser() {
+        UserVO userVO = userService.getCurrentUser();
+        return ResponseResult.success(userVO);
     }
 
 

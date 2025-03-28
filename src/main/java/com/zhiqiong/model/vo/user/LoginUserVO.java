@@ -10,7 +10,7 @@ import lombok.Data;
  */
 
 @Data
-@ApiModel(value="RegisterUserVO对象", description="用户登录")
+@ApiModel(value="LoginUserVO对象", description="用户登录")
 public class LoginUserVO {
 
     @ApiModelProperty(value = "账号")

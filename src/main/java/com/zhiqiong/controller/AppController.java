@@ -1,8 +1,10 @@
 package com.zhiqiong.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhiqiong.common.ResponseResult;
 import com.zhiqiong.model.vo.IdVO;
+import com.zhiqiong.model.vo.app.AppPageVO;
 import com.zhiqiong.model.vo.app.AppVO;
 import com.zhiqiong.model.vo.app.OperateAppVO;
 import com.zhiqiong.model.vo.app.ReviewAppVO;
@@ -24,7 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/app")
-@Api(tags = "应用管理")
+//@Api(tags = "应用管理")
 public class AppController {
     @Resource
     private AppService appService;
@@ -42,6 +44,13 @@ public class AppController {
                                                      @RequestParam(value = "reviewStatus", required = false) Integer reviewStatus) {
         List<AppVO> appList = appService.selectAppList(appName, reviewStatus);
         return ResponseResult.success(appList);
+    }
+
+    @PostMapping("/page")
+    @ApiOperation(value = "获取应用分页列表")
+    public ResponseResult<Page<AppVO>> selectAppPage(@RequestBody AppPageVO pageVO) {
+        Page<AppVO> appPage = appService.selectAppPage(pageVO);
+        return ResponseResult.success(appPage);
     }
 
     @GetMapping("/user/list")

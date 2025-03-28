@@ -1,11 +1,13 @@
 package com.zhiqiong.service;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhiqiong.model.entity.UserEntity;
 import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.user.LoginUserVO;
 import com.zhiqiong.model.vo.user.RegisterUserVO;
+import com.zhiqiong.model.vo.user.UserPageVO;
 import com.zhiqiong.model.vo.user.UserVO;
 
 import java.util.List;
@@ -42,4 +44,7 @@ public interface UserService extends IService<UserEntity> {
 
     void logout();
 
+    Page<UserVO> selectPage(UserPageVO userPageVO);
+
+    List<UserVO> selectUserInfoBatch(List<Long> userIds);
 }

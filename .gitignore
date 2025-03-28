@@ -28,3 +28,4 @@ target/*
 #*.properties
 src/test/*
 application-dev.yml
+application-local.yml

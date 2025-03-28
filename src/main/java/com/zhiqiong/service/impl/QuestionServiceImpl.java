@@ -2,14 +2,17 @@ package com.zhiqiong.service.impl;
 
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhiqiong.common.ErrorCode;
 import com.zhiqiong.mapper.QuestionMapper;
 import com.zhiqiong.model.entity.QuestionEntity;
 import com.zhiqiong.model.vo.app.AppVO;
 import com.zhiqiong.model.vo.question.AddQuestionVO;
+import com.zhiqiong.model.vo.question.QuestionPageVO;
 import com.zhiqiong.model.vo.question.TopicVO;
 import com.zhiqiong.model.vo.user.UserVO;
 import com.zhiqiong.service.AppService;
@@ -89,10 +92,21 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, QuestionEnt
         QuestionEntity question = this.getById(id);
         ThrowExceptionUtil.throwIf(question == null, ErrorCode.ERROR_PARAM, "题目id错误");
         String jsonStr = JSONUtil.toJsonStr(topicVO);
-        return this.lambdaUpdate()
-                .set(QuestionEntity::getQuestionContent, jsonStr)
-                .eq(QuestionEntity::getId, id)
-                .update();
+        return this.lambdaUpdate().set(QuestionEntity::getQuestionContent, jsonStr).eq(QuestionEntity::getId, id).update();
+    }
+
+    @Override
+    public Page<TopicVO> selectTopicPage(QuestionPageVO questionPageVO) {
+        Long appId = questionPageVO.getAppId();
+        Integer pageNum = questionPageVO.getPageNum();
+        Integer pageSize = questionPageVO.getPageSize();
+        LambdaQueryWrapper<QuestionEntity> query = new LambdaQueryWrapper<>();
+        query.eq(QuestionEntity::getAppId, appId);
+        Page<QuestionEntity> page = this.page(new Page<>(pageNum, pageSize), query);
+        converterVO(page.getRecords());
+        Page<TopicVO> topicPage = new Page<>(pageNum, pageSize, page.getTotal());
+        topicPage.setRecords(converterVO(page.getRecords()));
+        return topicPage;
     }
 
     @Override

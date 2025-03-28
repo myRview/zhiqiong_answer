@@ -29,12 +29,12 @@ public class ResponseResult<T> {
         return new ResponseResult<>(ErrorCode.SUCCESS.getCode(), ErrorCode.SUCCESS.getMessage(), null);
     }
 
-    public static <T> ResponseResult<T> success(String message, T data) {
+    public static <T> ResponseResult<T> success(T data, String message) {
         return new ResponseResult<>(ErrorCode.SUCCESS.getCode(), message, data);
     }
 
     public static <T> ResponseResult<T> success(T data) {
-        return success(ErrorCode.SUCCESS.getMessage(), data);
+        return success(data, ErrorCode.SUCCESS.getMessage());
     }
 
     public static ResponseResult<?> fail(String message) {

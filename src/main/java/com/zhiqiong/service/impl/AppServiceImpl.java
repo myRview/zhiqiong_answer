@@ -6,12 +6,14 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhiqiong.common.ErrorCode;
 import com.zhiqiong.enums.ReviewStatusEnum;
 import com.zhiqiong.model.entity.AppEntity;
 import com.zhiqiong.mapper.AppMapper;
 import com.zhiqiong.model.vo.IdVO;
+import com.zhiqiong.model.vo.app.AppPageVO;
 import com.zhiqiong.model.vo.app.AppVO;
 import com.zhiqiong.model.vo.app.OperateAppVO;
 import com.zhiqiong.model.vo.app.ReviewAppVO;
@@ -27,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -108,6 +112,27 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
     }
 
     @Override
+    public Page<AppVO> selectAppPage(AppPageVO pageVO) {
+        String appName = pageVO.getAppName();
+        Integer appType = pageVO.getAppType();
+        Integer scoringStrategy = pageVO.getScoringStrategy();
+        Integer reviewStatus = pageVO.getReviewStatus();
+        Integer pageNum = pageVO.getPageNum();
+        Integer pageSize = pageVO.getPageSize();
+        LambdaQueryWrapper<AppEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(StrUtil.isNotBlank(appName), AppEntity::getAppName, appName);
+        queryWrapper.eq(appType != null, AppEntity::getAppType, appType);
+        queryWrapper.eq(scoringStrategy != null, AppEntity::getScoringStrategy, scoringStrategy);
+        queryWrapper.eq(reviewStatus != null, AppEntity::getReviewStatus, reviewStatus);
+        queryWrapper.orderByDesc(AppEntity::getId);
+        Page<AppEntity> page = this.page(new Page<>(pageNum, pageSize), queryWrapper);
+        Page<AppVO> pageInfo = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+        List<AppVO> records = converterVo(page.getRecords());
+        pageInfo.setRecords(records);
+        return pageInfo;
+    }
+
+    @Override
     public List<AppVO> selectAppListByUser(Long userId) {
         LambdaQueryWrapper<AppEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AppEntity::getUserId, userId);
@@ -151,6 +176,19 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
         if (CollectionUtil.isEmpty(appList)) {
             return CollectionUtil.newArrayList();
         }
-        return appList.stream().map(this::converterVo).collect(Collectors.toList());
+        List<Long> createUserIds = appList.stream().map(AppEntity::getUserId).distinct().collect(Collectors.toList());
+        List<Long> reviewUserIds = appList.stream().map(AppEntity::getReviewerId).distinct().collect(Collectors.toList());
+        createUserIds.addAll(reviewUserIds);
+        List<UserVO> userVOList = userService.selectUserInfoBatch(createUserIds);
+        List<AppVO> appVOList = appList.stream().map(this::converterVo).collect(Collectors.toList());
+        if (CollectionUtil.isNotEmpty(userVOList)) {
+            Map<Long, UserVO> userMap = userVOList.stream().collect(Collectors.toMap(UserVO::getId, Function.identity()));
+            appVOList.stream().map(app -> {
+                app.setUser(userMap.get(app.getUserId()));
+                app.setReviewUser(userMap.get(app.getReviewerId()));
+                return app;
+            }).collect(Collectors.toList());
+        }
+        return appVOList;
     }
 }

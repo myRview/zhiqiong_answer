@@ -1,9 +1,11 @@
 package com.zhiqiong.service;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhiqiong.model.entity.AppEntity;
 import com.zhiqiong.model.vo.IdVO;
+import com.zhiqiong.model.vo.app.AppPageVO;
 import com.zhiqiong.model.vo.app.AppVO;
 import com.zhiqiong.model.vo.app.OperateAppVO;
 import com.zhiqiong.model.vo.app.ReviewAppVO;
@@ -34,4 +36,6 @@ public interface AppService extends IService<AppEntity> {
     List<AppVO> selectAppListByUser(Long userId);
 
     boolean reviewApp(ReviewAppVO reviewAppVO);
+
+    Page<AppVO> selectAppPage(AppPageVO pageVO);
 }

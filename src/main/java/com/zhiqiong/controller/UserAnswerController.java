@@ -22,7 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user/answer")
-@Api(tags = "用户答题记录")
+//@Api(tags = "用户答题记录")
 public class UserAnswerController {
 
     @Resource

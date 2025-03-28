@@ -94,7 +94,7 @@ public class RedisCacheManager {
      * @param key 缓存键值
      * @return 缓存键值对应的数据
      */
-    public String getCacheObject(final String key) {
+    public String getCacheValue(final String key) {
         ValueOperations<String, String> operation = stringRedisTemplate.opsForValue();
         return operation.get(key);
     }

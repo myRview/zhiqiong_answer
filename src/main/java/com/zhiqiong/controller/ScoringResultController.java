@@ -19,7 +19,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/scoring/result")
-@Api(tags = "评分结果")
+//@Api(tags = "评分结果")
 public class ScoringResultController {
     @Resource
     private ScoringResultService scoringResultService;

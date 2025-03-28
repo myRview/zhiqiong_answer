@@ -1,10 +1,12 @@
 package com.zhiqiong.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhiqiong.common.ResponseResult;
 import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.question.AIGeneratorRequestVO;
 import com.zhiqiong.model.vo.question.AddQuestionVO;
+import com.zhiqiong.model.vo.question.QuestionPageVO;
 import com.zhiqiong.model.vo.question.TopicVO;
 import com.zhiqiong.manager.AIService;
 import com.zhiqiong.service.QuestionService;
@@ -25,7 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/question")
-@Api(tags = "题目管理")
+//@Api(tags = "题目管理")
 public class QuestionController {
     
     @Resource
@@ -54,6 +56,14 @@ public class QuestionController {
         boolean add = questionService.addQuestion(addQuestionVO);
         return ResponseResult.success(add);
     }
+
+    @PostMapping("/page")
+    @ApiOperation(value = "获取题目列表")
+    public ResponseResult<Page<TopicVO>> selectTopicPage(@RequestBody QuestionPageVO questionPageVO) {
+        Page<TopicVO> page = questionService.selectTopicPage(questionPageVO);
+        return ResponseResult.success(page);
+    }
+
 
     @DeleteMapping("/delete")
     @ApiOperation(value = "删除题目")

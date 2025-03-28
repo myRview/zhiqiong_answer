@@ -94,31 +94,31 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         ScoringResult result = scoringStrategyContext.calculateScore(appVO, choicesResult, topicVOList);
         ThrowExceptionUtil.throwIf(ObjUtil.isNull(result), ErrorCode.ERROR_PARAM, "计算结果异常");
 
-//        String typeName = result.getTypeName();
-//        String description = result.getDescription();
-//        int resultScore = result.getScore();
-//        ScoringResultEntity score = new ScoringResultEntity();
-//        score.setResultName(typeName);
-//        score.setResultDesc(description);
-//        score.setResultPicture(result.getResultPicture());
-//        score.setResultProp(result.getResultProp());
-//        score.setResultScoreRange(result.getResultScoreRange());
-//        score.setAppId(appId);
-//        score.setUserId(user.getId());
-//        scoringResultService.save(score);
-//
-//        UserAnswerEntity userAnswerEntity = new UserAnswerEntity();
-//        userAnswerEntity.setAppId(appId);
-//        userAnswerEntity.setAppType(appVO.getAppType());
-//        userAnswerEntity.setScoringStrategy(appVO.getScoringStrategy());
-//        userAnswerEntity.setChoices(JSONUtil.toJsonStr(choicesResult));
-//        userAnswerEntity.setUserId(user.getId());
-//        userAnswerEntity.setResultId(score.getId());
-//        userAnswerEntity.setResultName(typeName);
-//        userAnswerEntity.setResultDesc(description);
-//        userAnswerEntity.setResultPicture(result.getResultPicture());
-//        userAnswerEntity.setResultScore(resultScore);
-//        this.save(userAnswerEntity);
+        String typeName = result.getTypeName();
+        String description = result.getDescription();
+        int resultScore = result.getScore();
+        ScoringResultEntity score = new ScoringResultEntity();
+        score.setResultName(typeName);
+        score.setResultDesc(description);
+        score.setResultPicture(result.getResultPicture());
+        score.setResultProp(result.getResultProp());
+        score.setResultScoreRange(result.getResultScoreRange());
+        score.setAppId(appId);
+        score.setUserId(user.getId());
+        scoringResultService.save(score);
+
+        UserAnswerEntity userAnswerEntity = new UserAnswerEntity();
+        userAnswerEntity.setAppId(appId);
+        userAnswerEntity.setAppType(appVO.getAppType());
+        userAnswerEntity.setScoringStrategy(appVO.getScoringStrategy());
+        userAnswerEntity.setChoices(JSONUtil.toJsonStr(choicesResult));
+        userAnswerEntity.setUserId(user.getId());
+        userAnswerEntity.setResultId(score.getId());
+        userAnswerEntity.setResultName(typeName);
+        userAnswerEntity.setResultDesc(description);
+        userAnswerEntity.setResultPicture(result.getResultPicture());
+        userAnswerEntity.setResultScore(resultScore);
+        this.save(userAnswerEntity);
     }
 
 

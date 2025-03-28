@@ -4,8 +4,8 @@ server:
     context-path: /api
 spring:
   profiles:
-    active: dev
-#  #项目名称
+    active: local
+  #项目名称
   application:
     name: zhiqiong
   datasource:
@@ -34,7 +34,8 @@ mybatis-plus:
 knife4j:
   enable: true
   openapi:
-    title: 接口文档
+    title: 智穹接口文档
+    description: 智穹接口文档
     version: 1.0.0
     group:
       default:
@@ -43,6 +44,13 @@ knife4j:
           - com.zhiqiong.controller
 oapi:
   key: xxxxxxxxx   #换成自己的 oapi key
+cos:
+  client:
+    host: xxxxxxxxx  #域名
+    secretId: xxxxxxxxx
+    secretKey: xxxxxxxxx
+    region: xxxxxxxxx  #区域
+    bucket:  #桶名
 logging:
   level:
     root: error
