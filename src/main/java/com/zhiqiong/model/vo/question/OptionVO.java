@@ -8,7 +8,6 @@ import lombok.Data;
  * @author 20231
  */
 @Data
-@ApiModel(value="选项VO")
 public class OptionVO {
 
     @ApiModelProperty(value = "选项内容")

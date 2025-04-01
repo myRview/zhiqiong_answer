@@ -47,4 +47,6 @@ public interface UserService extends IService<UserEntity> {
     Page<UserVO> selectPage(UserPageVO userPageVO);
 
     List<UserVO> selectUserInfoBatch(List<Long> userIds);
+
+    UserVO selectByAccount(String userAccount);
 }

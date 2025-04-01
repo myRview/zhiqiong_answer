@@ -5,8 +5,10 @@ import com.zhiqiong.model.vo.app.AppVO;
 import com.zhiqiong.model.vo.question.TopicVO;
 import com.zhiqiong.scoring.model.ScoringResult;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.util.List;
 

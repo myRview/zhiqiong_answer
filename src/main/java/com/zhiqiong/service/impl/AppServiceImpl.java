@@ -73,6 +73,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
 
     @Override
     public void addApp(OperateAppVO appVO) {
+        checkParams(appVO);
         AppEntity app = new AppEntity();
         BeanUtil.copyProperties(appVO, app);
         app.setReviewStatus(ReviewStatusEnum.REVIEW.getValue());
@@ -119,11 +120,18 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
         Integer reviewStatus = pageVO.getReviewStatus();
         Integer pageNum = pageVO.getPageNum();
         Integer pageSize = pageVO.getPageSize();
+        Boolean isAdmin = pageVO.getIsAdmin();
+        Long userId = null;
+        if (!isAdmin) {
+            UserVO user = userService.getCurrentUser();
+            userId = user.getId();
+        }
         LambdaQueryWrapper<AppEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.like(StrUtil.isNotBlank(appName), AppEntity::getAppName, appName);
         queryWrapper.eq(appType != null, AppEntity::getAppType, appType);
         queryWrapper.eq(scoringStrategy != null, AppEntity::getScoringStrategy, scoringStrategy);
         queryWrapper.eq(reviewStatus != null, AppEntity::getReviewStatus, reviewStatus);
+        queryWrapper.eq(userId != null, AppEntity::getUserId, userId);
         queryWrapper.orderByDesc(AppEntity::getId);
         Page<AppEntity> page = this.page(new Page<>(pageNum, pageSize), queryWrapper);
         Page<AppVO> pageInfo = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
@@ -163,6 +171,15 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
         return this.update(updateWrapper);
     }
 
+    @Override
+    public Map<Long, AppVO> selectAppList(List<Long> appIds) {
+        if (CollectionUtil.isEmpty(appIds)) {
+            return null;
+        }
+        List<AppEntity> appEntities = this.listByIds(appIds);
+        return converterVo(appEntities).stream().collect(Collectors.toMap(AppVO::getId, Function.identity()));
+    }
+
     private AppVO converterVo(AppEntity app) {
         if (app == null) {
             return null;
@@ -190,5 +207,15 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
             }).collect(Collectors.toList());
         }
         return appVOList;
+    }
+
+    private void checkParams(OperateAppVO appVO) {
+        String appName = appVO.getAppName();
+        Integer appType = appVO.getAppType();
+        Integer scoringStrategy = appVO.getScoringStrategy();
+        ThrowExceptionUtil.throwIf(StrUtil.isBlank(appName), ErrorCode.ERROR_PARAM, "应用名称不能为空");
+        ThrowExceptionUtil.throwIf(appType == null, ErrorCode.ERROR_PARAM, "应用类型不能为空");
+        ThrowExceptionUtil.throwIf(scoringStrategy == null, ErrorCode.ERROR_PARAM, "评分策略不能为空");
+
     }
 }

@@ -16,7 +16,6 @@ import java.util.List;
  * @since 2025-03-13
  */
 @Data
-@ApiModel(value = "QuestionVO对象")
 public class AddQuestionVO implements Serializable {
 
     private static final long serialVersionUID = 1L;

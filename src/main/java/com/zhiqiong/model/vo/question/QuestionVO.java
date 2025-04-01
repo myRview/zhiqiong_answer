@@ -15,7 +15,6 @@ import java.io.Serializable;
  * @since 2025-03-13
  */
 @Data
-@ApiModel(value="QuestionVO对象", description="题目表")
 public class QuestionVO implements Serializable {
 
     private static final long serialVersionUID = 1L;

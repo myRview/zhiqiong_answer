@@ -1,6 +1,6 @@
-package com.zhiqiong.model.vo.question;
+package com.zhiqiong.model.vo.answwer;
 
-import io.swagger.annotations.ApiModel;
+import com.zhiqiong.model.vo.app.AppVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -16,7 +16,6 @@ import java.util.List;
  * @since 2025-03-13
  */
 @Data
-@ApiModel(value="UserAnswerVO对象", description="用户答题记录")
 public class UserAnswerVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,6 +55,9 @@ public class UserAnswerVO implements Serializable {
 
     @ApiModelProperty(value="用户答案")
     private List<String> choicesResult;
+
+    @ApiModelProperty(value="应用信息")
+    private AppVO appVO;
 
 
 

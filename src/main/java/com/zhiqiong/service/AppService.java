@@ -11,6 +11,7 @@ import com.zhiqiong.model.vo.app.OperateAppVO;
 import com.zhiqiong.model.vo.app.ReviewAppVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -38,4 +39,6 @@ public interface AppService extends IService<AppEntity> {
     boolean reviewApp(ReviewAppVO reviewAppVO);
 
     Page<AppVO> selectAppPage(AppPageVO pageVO);
+
+    Map<Long, AppVO> selectAppList(List<Long> appIds);
 }

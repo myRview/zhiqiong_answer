@@ -279,13 +279,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      * @param id          用户Id，修改时校验
      */
     private void checkExistUser(String userAccount, Long id) {
-        UserEntity user = selectByAccount(userAccount);
+        UserVO user = selectByAccount(userAccount);
         ThrowExceptionUtil.throwIf(ObjUtil.isNull(id) ? (user != null) : (user != null && !user.getId().equals(id)), ErrorCode.ERROR_PARAM, "账号已存在");
     }
 
-    private UserEntity selectByAccount(String userAccount) {
+    @Override
+    public UserVO selectByAccount(String userAccount) {
         LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserEntity::getUserAccount, userAccount);
-        return this.baseMapper.selectOne(queryWrapper);
+        return converterVO(this.baseMapper.selectOne(queryWrapper));
     }
 }

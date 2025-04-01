@@ -55,7 +55,7 @@ public class MBTIResult {
         // 探险家
         MBTI_TYPE_MAP.put("ISFP", new String[]{"探险家", "敏感的艺术家，追求自由和感官体验"});
         // 企业家
-        MBTI_TYPE_MAP.put("ESTP", new String[]{"企业家", "机智的实干家，善于快速应对挑战"});
+        MBTI_TYPE_MAP.put("ESTP", new String[]{"    ", "机智的实干家，善于快速应对挑战"});
         // 表演者
         MBTI_TYPE_MAP.put("ESFP", new String[]{"表演者", "活力的娱乐者，热爱社交和即兴发挥"});
 

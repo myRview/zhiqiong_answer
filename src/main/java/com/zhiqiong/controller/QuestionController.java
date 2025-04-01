@@ -38,7 +38,7 @@ public class QuestionController {
 
     @GetMapping("/id")
     @ApiOperation(value = "获取题目详情")
-    public ResponseResult<?> selectQuestionInfo(@RequestParam(value = "id") Long id) {
+    public ResponseResult<TopicVO> selectQuestionInfo(@RequestParam(value = "id") Long id) {
         TopicVO topicVO = questionService.selectTopicInfo(id);
         return ResponseResult.success(topicVO);
     }
@@ -83,7 +83,7 @@ public class QuestionController {
 
     @PostMapping("/generator")
     @ApiOperation(value = "AI生成题目")
-    public ResponseResult< List<TopicVO>> updateQuestion(@RequestBody AIGeneratorRequestVO requestVO) {
+    public ResponseResult< List<TopicVO>> generatorQuestion(@RequestBody AIGeneratorRequestVO requestVO) {
         List<TopicVO> topics = aiService.generateQuestion(requestVO);
         return ResponseResult.success(topics);
     }

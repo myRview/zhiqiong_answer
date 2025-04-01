@@ -3,6 +3,7 @@ package com.zhiqiong.manager;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.RandomUtil;
+import com.qcloud.cos.model.UploadResult;
 import com.zhiqiong.common.ErrorCode;
 import com.zhiqiong.exception.BusinessException;
 import com.zhiqiong.manager.cos.CosManager;
@@ -29,6 +30,13 @@ public class FileUploadService {
 
     public String upload(MultipartFile file, String type) {
 
+        long start = System.currentTimeMillis();
+        long size = file.getSize();
+//        if (size > 1024 * 1024 ) {
+//            //TODO：采用分片上传
+//
+//
+//        }
         String imageUrl = null;
         String originalFilename = file.getOriginalFilename();
         //获取文件后缀名
@@ -42,12 +50,14 @@ public class FileUploadService {
             File tempFile = File.createTempFile(filePath, null);
             file.transferTo(tempFile);
             //上传文件
-            imageUrl = cosManager.putImage(filePath,filePath, tempFile);
+//            imageUrl = cosManager.putImage(filePath,filePath, tempFile);
+            imageUrl = cosManager.multipartUpload(filePath, tempFile);
             log.error("上传成功，返回结果：{}", imageUrl);
         } catch (IOException e) {
             log.error("上传失败", e);
             throw new BusinessException(ErrorCode.ERROR_SYSTEM, "上传失败");
         }
+        log.error("上传文件耗时：{}ms", System.currentTimeMillis() - start);
         return imageUrl;
     }
 }

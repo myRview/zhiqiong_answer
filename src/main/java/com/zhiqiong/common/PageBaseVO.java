@@ -11,6 +11,6 @@ import java.io.Serializable;
 @Data
 public class PageBaseVO implements Serializable {
 
-    private Integer pageNum;
-    private Integer pageSize;
+    private Integer pageNum = 1;
+    private Integer pageSize =10;
 }

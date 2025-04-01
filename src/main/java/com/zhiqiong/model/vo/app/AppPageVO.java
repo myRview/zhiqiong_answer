@@ -34,6 +34,8 @@ public class AppPageVO extends PageBaseVO {
     @ApiModelProperty(value = "审核状态：0-待审核, 1-通过, 2-拒绝")
     private Integer reviewStatus;
 
+    @ApiModelProperty(value = "管理员还是普通用户,默认普通用户")
+    private Boolean isAdmin = Boolean.FALSE;
 
 
 }

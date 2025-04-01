@@ -11,7 +11,6 @@ import java.util.List;
  * @date 2025/3/19 20:25
  */
 @Data
-@ApiModel(value = "题目实体VO")
 public class TopicVO {
 
     @ApiModelProperty(value = "题目id")

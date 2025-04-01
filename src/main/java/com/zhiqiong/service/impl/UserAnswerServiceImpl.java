@@ -3,23 +3,20 @@ package com.zhiqiong.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhiqiong.common.ErrorCode;
-import com.zhiqiong.common.MBTIResult;
-import com.zhiqiong.enums.AppTypeEnum;
 import com.zhiqiong.mapper.UserAnswerMapper;
 import com.zhiqiong.model.entity.ScoringResultEntity;
 import com.zhiqiong.model.entity.UserAnswerEntity;
+import com.zhiqiong.model.vo.answwer.AnswerPageVO;
 import com.zhiqiong.model.vo.app.AppVO;
 import com.zhiqiong.model.vo.question.AddQuestionVO;
-import com.zhiqiong.model.vo.question.OptionVO;
 import com.zhiqiong.model.vo.question.TopicVO;
-import com.zhiqiong.model.vo.question.UserAnswerVO;
+import com.zhiqiong.model.vo.answwer.UserAnswerVO;
 import com.zhiqiong.model.vo.user.UserVO;
 import com.zhiqiong.scoring.ScoringStrategyContext;
 import com.zhiqiong.scoring.model.ScoringResult;
@@ -30,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,7 +54,11 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
     @Resource
     private ScoringStrategyContext scoringStrategyContext;
 
-
+    @Override
+    public UserAnswerVO selectAnswerById(Long id) {
+        UserAnswerEntity answerEntity = this.getById(id);
+        return converterVO(answerEntity);
+    }
 
     @Override
     public List<UserAnswerVO> selectAnswerListByApp(Long appId, Long userId) {
@@ -70,10 +70,35 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         return converterVO(list);
     }
 
+    @Override
+    public Page<UserAnswerVO> selectAnswerPage(AnswerPageVO answerPageVO) {
+        Long appId = answerPageVO.getAppId();
+        Integer pageNum = answerPageVO.getPageNum();
+        Integer pageSize = answerPageVO.getPageSize();
+        UserVO user = userService.getCurrentUser();
+        ThrowExceptionUtil.throwIf(ObjUtil.isNull(user), ErrorCode.ERROR_PARAM, "用户未登录");
+
+        LambdaQueryWrapper<UserAnswerEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(appId != null, UserAnswerEntity::getAppId, appId);
+        queryWrapper.eq(UserAnswerEntity::getUserId, user.getId());
+        Page<UserAnswerEntity> page = this.page(new Page<>(pageNum, pageSize), queryWrapper);
+        Page<UserAnswerVO> answerPage = new Page<>(pageNum, pageSize, page.getTotal());
+        List<UserAnswerVO> userAnswerVOS = converterVO(page.getRecords());
+        if (CollectionUtil.isNotEmpty(userAnswerVOS)) {
+            List<Long> appIds = userAnswerVOS.stream().map(UserAnswerVO::getAppId).distinct().collect(Collectors.toList());
+            Map<Long, AppVO> appMap = appService.selectAppList(appIds);
+            userAnswerVOS.forEach(answerVO -> {
+                AppVO appVO = appMap.get(answerVO.getAppId());
+                answerVO.setAppVO(appVO);
+            });
+        }
+        answerPage.setRecords(userAnswerVOS);
+        return answerPage;
+    }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void submitAnswer(UserAnswerVO userAnswerVO) {
+    public UserAnswerVO submitAnswer(UserAnswerVO userAnswerVO) {
         Long appId = userAnswerVO.getAppId();
         AppVO appVO = appService.selectAppInfo(appId);
         ThrowExceptionUtil.throwIf(ObjUtil.isNull(appVO), ErrorCode.ERROR_PARAM, "应用不存在");
@@ -97,15 +122,6 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         String typeName = result.getTypeName();
         String description = result.getDescription();
         int resultScore = result.getScore();
-        ScoringResultEntity score = new ScoringResultEntity();
-        score.setResultName(typeName);
-        score.setResultDesc(description);
-        score.setResultPicture(result.getResultPicture());
-        score.setResultProp(result.getResultProp());
-        score.setResultScoreRange(result.getResultScoreRange());
-        score.setAppId(appId);
-        score.setUserId(user.getId());
-        scoringResultService.save(score);
 
         UserAnswerEntity userAnswerEntity = new UserAnswerEntity();
         userAnswerEntity.setAppId(appId);
@@ -113,12 +129,14 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         userAnswerEntity.setScoringStrategy(appVO.getScoringStrategy());
         userAnswerEntity.setChoices(JSONUtil.toJsonStr(choicesResult));
         userAnswerEntity.setUserId(user.getId());
-        userAnswerEntity.setResultId(score.getId());
+//        userAnswerEntity.setResultId();
         userAnswerEntity.setResultName(typeName);
         userAnswerEntity.setResultDesc(description);
         userAnswerEntity.setResultPicture(result.getResultPicture());
         userAnswerEntity.setResultScore(resultScore);
         this.save(userAnswerEntity);
+        userAnswerVO.setId(userAnswerEntity.getId());
+        return userAnswerVO;
     }
 
 
@@ -131,7 +149,7 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
     }
 
     private List<UserAnswerVO> converterVO(List<UserAnswerEntity> userAnswerList) {
-        if (CollectionUtil.isEmpty(userAnswerList)) return null;
+        if (CollectionUtil.isEmpty(userAnswerList)) return CollectionUtil.newArrayList();
         return userAnswerList.stream().map(this::converterVO).collect(Collectors.toList());
     }
 }
