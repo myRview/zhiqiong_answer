@@ -20,6 +20,7 @@ import com.zhiqiong.model.vo.app.ReviewAppVO;
 import com.zhiqiong.model.vo.user.UserVO;
 import com.zhiqiong.service.AppService;
 import com.zhiqiong.service.QuestionService;
+import com.zhiqiong.service.ScoringResultService;
 import com.zhiqiong.service.UserService;
 import com.zhiqiong.utils.ThrowExceptionUtil;
 import org.springframework.context.annotation.Lazy;
@@ -49,6 +50,8 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
     @Resource
     @Lazy
     private QuestionService questionService;
+    @Resource
+    private ScoringResultService scoringResultService;
 
 
     @Override
@@ -67,7 +70,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
         LambdaQueryWrapper<AppEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.like(StrUtil.isNotBlank(appName), AppEntity::getAppName, appName);
         queryWrapper.eq(reviewStatus != null, AppEntity::getReviewStatus, reviewStatus);
-        queryWrapper.orderByDesc(AppEntity::getId);
+        queryWrapper.orderByDesc(AppEntity::getCreateTime);
         return converterVo(this.list(queryWrapper));
     }
 
@@ -86,8 +89,11 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
     @Override
     public void deleteApp(IdVO idVO) {
         Long id = idVO.getId();
-        this.removeById(id);
-        questionService.deleteByAppId(id);
+        synchronized (this) {
+            this.removeById(id);
+            boolean removeQuestion = questionService.deleteByAppId(id);
+            boolean removeResult = scoringResultService.deleteByAppId(id);
+        }
     }
 
     @Override
@@ -132,7 +138,8 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
         queryWrapper.eq(scoringStrategy != null, AppEntity::getScoringStrategy, scoringStrategy);
         queryWrapper.eq(reviewStatus != null, AppEntity::getReviewStatus, reviewStatus);
         queryWrapper.eq(userId != null, AppEntity::getUserId, userId);
-        queryWrapper.orderByDesc(AppEntity::getId);
+        queryWrapper.orderByDesc(AppEntity::getCreateTime);
+        queryWrapper.orderByDesc(AppEntity::getCreateTime);
         Page<AppEntity> page = this.page(new Page<>(pageNum, pageSize), queryWrapper);
         Page<AppVO> pageInfo = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
         List<AppVO> records = converterVo(page.getRecords());
@@ -144,7 +151,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, AppEntity> implements
     public List<AppVO> selectAppListByUser(Long userId) {
         LambdaQueryWrapper<AppEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AppEntity::getUserId, userId);
-        queryWrapper.orderByDesc(AppEntity::getId);
+        queryWrapper.orderByDesc(AppEntity::getCreateTime);
         return converterVo(this.list(queryWrapper));
     }
 

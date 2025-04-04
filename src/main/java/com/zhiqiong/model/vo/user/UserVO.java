@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -44,6 +45,9 @@ public class UserVO implements Serializable {
 
     @ApiModelProperty(value = "用户角色：user/admin/ban")
     private String userRole;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
 
 
 }

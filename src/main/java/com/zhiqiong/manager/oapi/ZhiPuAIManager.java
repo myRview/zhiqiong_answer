@@ -8,6 +8,7 @@ import com.zhipu.oapi.service.v4.image.ImageResult;
 import com.zhipu.oapi.service.v4.model.*;
 import com.zhiqiong.common.ErrorCode;
 import com.zhiqiong.exception.BusinessException;
+import io.reactivex.Flowable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -59,7 +60,13 @@ public class ZhiPuAIManager {
      * @param temperature 取值范围是：[0.0,1.0]， 默认值为 0.95，值越大，会使输出更随机，更具创造性；值越小，输出会更加稳定或确定
      */
     public String doSendMessage(List<ChatMessage> messages, Boolean stream, Float temperature) {
-        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder().model(Constants.ModelChatGLM4).stream(stream).temperature(temperature).invokeMethod(Constants.invokeMethod).messages(messages).build();
+        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+                .model(Constants.ModelChatGLM4)
+                .stream(stream)
+                .temperature(temperature)
+                .invokeMethod(Constants.invokeMethod)
+                .messages(messages)
+                .build();
         try {
             ModelApiResponse invokeModelApiResp = client.invokeModelApi(chatCompletionRequest);
             List<Choice> choices = invokeModelApiResp.getData().getChoices();
@@ -70,11 +77,50 @@ public class ZhiPuAIManager {
         }
     }
 
+
+    /**
+     * 流式输出
+     *
+     * @param systemMessage 系统消息
+     * @param userMessage   用户消息
+     * @return
+     */
+    public Flowable<ModelData> doSendStreamMessage(String systemMessage, String userMessage) {
+        List<ChatMessage> messages = new ArrayList<>();
+        ChatMessage systemMsg = new ChatMessage(ChatMessageRole.SYSTEM.value(), systemMessage);
+        messages.add(systemMsg);
+        ChatMessage userMsg = new ChatMessage(ChatMessageRole.USER.value(), userMessage);
+        messages.add(userMsg);
+        return doSendStreamMessage(messages, DEFAULT_TEMPERATURE);
+    }
+
+
+    /**
+     * @param messages    消息列表
+     * @param temperature 取值范围是：[0.0,1.0]， 默认值为 0.95，值越大，会使输出更随机，更具创造性；值越小，输出会更加稳定或确定
+     */
+    public Flowable<ModelData> doSendStreamMessage(List<ChatMessage> messages, Float temperature) {
+        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+                .model(Constants.ModelChatGLM4)
+                .stream(Boolean.TRUE)
+                .temperature(temperature)
+                .invokeMethod(Constants.invokeMethod)
+                .messages(messages)
+                .build();
+        try {
+            ModelApiResponse sseModelApiResp = client.invokeModelApi(chatCompletionRequest);
+            return sseModelApiResp.getFlowable();
+        } catch (Exception e) {
+            log.error("调用智谱AI接口异常", e);
+            throw new BusinessException(ErrorCode.ERROR_SYSTEM, "调用智谱AI接口异常");
+        }
+    }
+
     /**
      * 生成图片
      *
      * @param prompt 图片描述
-     * @param size   图片大小
+     * @param size   图片大小   格式：1344x768
      * @return
      */
     public String doView(String prompt, String size) {

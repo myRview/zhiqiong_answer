@@ -1,21 +1,13 @@
 package com.zhiqiong.controller;
 
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhiqiong.common.ResponseResult;
-import com.zhiqiong.manager.FileUploadService;
-import com.zhiqiong.model.vo.IdVO;
-import com.zhiqiong.model.vo.user.LoginUserVO;
-import com.zhiqiong.model.vo.user.RegisterUserVO;
-import com.zhiqiong.model.vo.user.UserPageVO;
-import com.zhiqiong.model.vo.user.UserVO;
-import com.zhiqiong.service.UserService;
+import com.zhiqiong.manager.file.FileUploadService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * <p>

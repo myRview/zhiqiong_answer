@@ -3,12 +3,15 @@ package com.zhiqiong.model.vo.score;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+import java.util.Date;
+
 /**
  * @author huangkun
  * @date 2025/3/30 21:38
  */
 @Data
-public class ScoringResultVO {
+public class ScoringResultVO implements Serializable {
 
     @ApiModelProperty(value = "id")
     private Long id;
@@ -33,5 +36,8 @@ public class ScoringResultVO {
 
     @ApiModelProperty(value = "创建用户 id")
     private Long userId;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
 
 }

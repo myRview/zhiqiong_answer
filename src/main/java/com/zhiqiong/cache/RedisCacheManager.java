@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -205,8 +206,8 @@ public class RedisCacheManager {
      * @param hKey Hash键
      * @return Hash中的对象
      */
-    public <T> T getCacheMapValue(final String key, final String hKey) {
-        HashOperations<String, String, T> opsForHash = stringRedisTemplate.opsForHash();
+    public String getCacheMapValue(final String key, final String hKey) {
+        HashOperations<String, String, String> opsForHash = stringRedisTemplate.opsForHash();
         return opsForHash.get(key, hKey);
     }
 

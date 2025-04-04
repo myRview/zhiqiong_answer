@@ -61,5 +61,8 @@ public class AppVO implements Serializable {
     @ApiModelProperty(value = "创建用户")
     private UserVO reviewUser;
 
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
+
 
 }

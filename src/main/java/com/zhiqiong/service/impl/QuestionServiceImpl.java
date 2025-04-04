@@ -2,7 +2,6 @@ package com.zhiqiong.service.impl;
 
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -74,6 +73,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, QuestionEnt
         UserVO user = userService.getCurrentUser();
         ThrowExceptionUtil.throwIf(user == null, ErrorCode.ERROR_PARAM, "用户未登录");
 
+        //TODO：校验题目是否合法
+
         List<QuestionEntity> questionEntities = new ArrayList<>(topicVOList.size());
         for (TopicVO topicVO : topicVOList) {
             QuestionEntity questionVO = new QuestionEntity();
@@ -110,10 +111,10 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, QuestionEnt
     }
 
     @Override
-    public void deleteByAppId(Long appId) {
+    public boolean deleteByAppId(Long appId) {
         LambdaQueryWrapper<QuestionEntity> query = new LambdaQueryWrapper<>();
         query.eq(QuestionEntity::getAppId, appId);
-        this.remove(query);
+        return this.remove(query);
     }
 
     private List<TopicVO> converterVO(List<QuestionEntity> questionEntities) {

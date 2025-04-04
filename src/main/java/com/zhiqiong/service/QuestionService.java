@@ -4,13 +4,9 @@ package com.zhiqiong.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhiqiong.model.entity.QuestionEntity;
-import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.question.AddQuestionVO;
 import com.zhiqiong.model.vo.question.QuestionPageVO;
-import com.zhiqiong.model.vo.question.QuestionVO;
 import com.zhiqiong.model.vo.question.TopicVO;
-
-import java.util.List;
 
 /**
  * <p>
@@ -32,7 +28,7 @@ public interface QuestionService extends IService<QuestionEntity> {
 
     boolean updateTopic(TopicVO topicVO);
 
-    void deleteByAppId(Long appId);
+    boolean deleteByAppId(Long appId);
 
     Page<TopicVO> selectTopicPage(QuestionPageVO questionPageVO);
 }

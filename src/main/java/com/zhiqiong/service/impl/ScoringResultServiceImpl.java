@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -96,7 +97,33 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
         return this.update(updateWrapper);
     }
 
+    @Override
+    public Map<Long, List<ScoringResultVO>> selectMapByAll() {
+        List<ScoringResultEntity> records = this.lambdaQuery()
+                .select(ScoringResultEntity::getId,
+                        ScoringResultEntity::getAppId,
+                        ScoringResultEntity::getResultName,
+                        ScoringResultEntity::getResultDesc,
+                        ScoringResultEntity::getResultPicture,
+                        ScoringResultEntity::getResultProp,
+                        ScoringResultEntity::getResultScoreRange
+                ).list();
+        if (CollectionUtil.isEmpty(records)) return null;
+        return records.stream().collect(Collectors.groupingBy(ScoringResultEntity::getAppId, Collectors.mapping(this::converterVO, Collectors.toList())));
+    }
 
+    @Override
+    public boolean deleteByAppId(Long appId) {
+        return this.lambdaUpdate().eq(ScoringResultEntity::getAppId, appId).remove();
+    }
+
+    @Override
+    public ScoringResultVO selectByAppIdAndTypeCode(Long appId, String typeCode) {
+        LambdaQueryWrapper<ScoringResultEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ScoringResultEntity::getAppId, appId);
+        queryWrapper.eq(ScoringResultEntity::getResultProp, typeCode);
+        return converterVO(this.getOne(queryWrapper));
+    }
 
     private List<ScoringResultVO> converterVO(List<ScoringResultEntity> records) {
         if (CollectionUtil.isEmpty(records)) return CollectionUtil.newArrayList();

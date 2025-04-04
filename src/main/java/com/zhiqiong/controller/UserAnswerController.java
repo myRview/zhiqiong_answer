@@ -1,6 +1,7 @@
 package com.zhiqiong.controller;
 
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhiqiong.common.ResponseResult;
 import com.zhiqiong.model.vo.IdVO;
@@ -64,6 +65,12 @@ public class UserAnswerController {
     public ResponseResult<?> deleteAnswer(@RequestBody IdVO idVO) {
         userAnswerService.removeById(idVO.getId());
         return ResponseResult.success();
+    }
+
+    @GetMapping("/generator/id")
+    @ApiOperation(value = "生成唯一Id")
+    public ResponseResult<Long> generatorId() {
+        return ResponseResult.success(IdUtil.getSnowflakeNextId());
     }
 
 }

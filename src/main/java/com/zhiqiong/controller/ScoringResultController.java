@@ -2,7 +2,11 @@ package com.zhiqiong.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zhiqiong.cache.RedisCacheManager;
+import com.zhiqiong.common.ErrorCode;
 import com.zhiqiong.common.ResponseResult;
+import com.zhiqiong.common.constant.CacheConstants;
+import com.zhiqiong.model.entity.ScoringResultEntity;
 import com.zhiqiong.model.vo.score.ScoreResultPageVO;
 import com.zhiqiong.model.vo.score.ScoringResultVO;
 import com.zhiqiong.model.vo.IdVO;
@@ -28,6 +32,8 @@ import java.util.List;
 public class ScoringResultController {
     @Resource
     private ScoringResultService scoringResultService;
+    @Resource
+    private RedisCacheManager redisCacheManager;
 
     @PostMapping("/add")
     @ApiOperation(value = "添加评分规则")
@@ -54,17 +60,26 @@ public class ScoringResultController {
     @DeleteMapping("/delete")
     @ApiOperation(value = "删除评分结果")
     public ResponseResult<Boolean> deleteScoreResult(@RequestBody IdVO idVO) {
-        boolean remove = scoringResultService.removeById(idVO.getId());
-        return ResponseResult.success(remove);
+
+        Long id = idVO.getId();
+        ScoringResultEntity result = scoringResultService.getById(id);
+        if (result == null) {
+            return ResponseResult.fail(ErrorCode.ERROR_PARAM, "评分结果不存在");
+        }
+        boolean remove;
+        synchronized (this) {
+            remove = scoringResultService.removeById(id);
+            redisCacheManager.deleteCacheMapValue(CacheConstants.SCORE_RESULT_KEY + result.getAppId(), result.getResultProp());
+        }
+        return remove ? ResponseResult.success(remove) : ResponseResult.fail(ErrorCode.ERROR_PARAM, "删除失败");
     }
 
     @PostMapping("/update")
     @ApiOperation(value = "更新评分结果")
-    public ResponseResult<Boolean>updateScoreResult(@RequestBody ScoringResultVO resultVO) {
+    public ResponseResult<Boolean> updateScoreResult(@RequestBody ScoringResultVO resultVO) {
         boolean update = scoringResultService.updateScoreResult(resultVO);
         return ResponseResult.success(update);
     }
-
 
 
 }

@@ -63,5 +63,11 @@ public class AppEntity implements Serializable {
     @ApiModelProperty(value = "是否删除")
     private Integer status;
 
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
+
+    @ApiModelProperty(value = "更新时间")
+    private Date updateTime;
+
 
 }

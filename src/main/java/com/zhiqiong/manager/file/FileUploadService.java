@@ -1,4 +1,4 @@
-package com.zhiqiong.manager;
+package com.zhiqiong.manager.file;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
@@ -31,12 +31,6 @@ public class FileUploadService {
     public String upload(MultipartFile file, String type) {
 
         long start = System.currentTimeMillis();
-        long size = file.getSize();
-//        if (size > 1024 * 1024 ) {
-//            //TODO：采用分片上传
-//
-//
-//        }
         String imageUrl = null;
         String originalFilename = file.getOriginalFilename();
         //获取文件后缀名

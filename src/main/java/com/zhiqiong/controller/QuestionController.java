@@ -1,21 +1,30 @@
 package com.zhiqiong.controller;
 
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zhipu.oapi.service.v4.model.ModelData;
+import com.zhiqiong.common.ErrorCode;
 import com.zhiqiong.common.ResponseResult;
+import com.zhiqiong.exception.BusinessException;
 import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.question.AIGeneratorRequestVO;
 import com.zhiqiong.model.vo.question.AddQuestionVO;
 import com.zhiqiong.model.vo.question.QuestionPageVO;
 import com.zhiqiong.model.vo.question.TopicVO;
-import com.zhiqiong.manager.AIService;
+import com.zhiqiong.manager.oapi.AIService;
 import com.zhiqiong.service.QuestionService;
-import io.swagger.annotations.Api;
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -29,7 +38,7 @@ import java.util.List;
 @RequestMapping("/question")
 //@Api(tags = "题目管理")
 public class QuestionController {
-    
+
     @Resource
     private QuestionService questionService;
     @Resource
@@ -83,9 +92,56 @@ public class QuestionController {
 
     @PostMapping("/generator")
     @ApiOperation(value = "AI生成题目")
-    public ResponseResult< List<TopicVO>> generatorQuestion(@RequestBody AIGeneratorRequestVO requestVO) {
+    public ResponseResult<List<TopicVO>> generatorQuestion(@RequestBody AIGeneratorRequestVO requestVO) {
         List<TopicVO> topics = aiService.generateQuestion(requestVO);
         return ResponseResult.success(topics);
     }
 
+    @GetMapping("/sse/generator")
+    @ApiOperation(value = "AI生成题目(流式)")
+    public SseEmitter generateQuestionStream(AIGeneratorRequestVO requestVO) {
+        Flowable<ModelData> flowable = aiService.generateQuestionStream(requestVO);
+        if (flowable == null) {
+            throw new BusinessException(ErrorCode.ERROR_SYSTEM, "生成失败");
+        }
+        SseEmitter flowableEmitter = new SseEmitter();
+        StringBuilder contentBuilder = new StringBuilder();
+        AtomicInteger flag = new AtomicInteger(0);
+        flowable
+                // 异步线程池执行
+                .observeOn(Schedulers.io())
+                .map(chunk -> chunk.getChoices().get(0).getDelta().getContent())
+                .map(message -> message.replaceAll("\\s", ""))
+                .filter(StrUtil::isNotBlank)
+                .flatMap(message -> {
+                    // 将字符串转换为 List<Character>
+                    List<Character> charList = new ArrayList<>();
+                    for (char c : message.toCharArray()) {
+                        charList.add(c);
+                    }
+                    return Flowable.fromIterable(charList);
+                })
+                .doOnNext(c -> {
+                    {
+                        // 识别第一个 [ 表示开始 AI 传输 json 数据，打开 flag 开始拼接 json 数组
+                        if (c == '{') {
+                            flag.addAndGet(1);
+                        }
+                        if (flag.get() > 0) {
+                            contentBuilder.append(c);
+                        }
+                        if (c == '}') {
+                            flag.addAndGet(-1);
+                            if (flag.get() == 0) {
+                                // 累积单套题目满足 json 格式后，sse 推送至前端
+                                // sse 需要压缩成当行 json，sse 无法识别换行
+                                flowableEmitter.send(JSONUtil.toJsonStr(contentBuilder.toString()));
+                                // 清空 StringBuilder
+                                contentBuilder.setLength(0);
+                            }
+                        }
+                    }
+                }).doOnComplete(flowableEmitter::complete).subscribe();
+        return flowableEmitter;
+    }
 }

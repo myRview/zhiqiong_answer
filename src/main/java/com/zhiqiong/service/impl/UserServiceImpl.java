@@ -245,6 +245,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         queryWrapper.like(StrUtil.isNotBlank(userName), UserEntity::getUserName, userName);
         queryWrapper.like(StrUtil.isNotBlank(userAccount), UserEntity::getUserAccount, userAccount);
         queryWrapper.eq(StrUtil.isNotBlank(userRole), UserEntity::getUserRole, userRole);
+        queryWrapper.orderByDesc(UserEntity::getCreateTime);
         IPage<UserEntity> page = this.page(new Page<>(pageNum, pageSize), queryWrapper);
         Page<UserVO> pageResult = new Page<>(pageNum, pageSize,page.getTotal());
         pageResult.setRecords(converterVO(page.getRecords()));

@@ -20,6 +20,9 @@ spring:
     password: root
     database: 0
     timeout: 3000
+  servlet:
+    multipart:
+      max-file-size: 10MB
 #mybatis-plus配置
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
@@ -54,3 +57,9 @@ cos:
 logging:
   level:
     root: error
+thread:
+  pool:
+    core-pool-size: 8
+    max-pool-size: 16
+    keep-alive-time: 60
+    queue-capacity: 1000

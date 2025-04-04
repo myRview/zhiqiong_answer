@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,6 +59,9 @@ public class UserAnswerVO implements Serializable {
 
     @ApiModelProperty(value="应用信息")
     private AppVO appVO;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
 
 
 
