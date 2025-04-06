@@ -3,6 +3,7 @@ package com.zhiqiong.controller;
 
 import com.zhiqiong.common.ResponseResult;
 import com.zhiqiong.manager.file.FileUploadService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +20,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/file")
-//@Api(tags = "文件管理")
+@Api(tags = "文件管理")
 public class FileUploadController {
 
 

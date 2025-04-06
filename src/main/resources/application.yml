@@ -63,3 +63,5 @@ thread:
     max-pool-size: 16
     keep-alive-time: 60
     queue-capacity: 1000
+token:
+  expireTime: 60  #token过期时间，单位分钟

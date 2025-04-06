@@ -30,7 +30,7 @@ public class RedisCacheManager {
      * @param key   缓存的键值
      * @param value 缓存的值
      */
-    public void setCacheValue(final String key, String value) {
+    public void setCacheValue(final String key,final String value) {
         stringRedisTemplate.opsForValue().set(key, value);
     }
 
@@ -42,7 +42,7 @@ public class RedisCacheManager {
      * @param timeout  时间
      * @param timeUnit 时间颗粒度
      */
-    public void setCacheValue(final String key, String value, final Integer timeout, final TimeUnit timeUnit) {
+    public void setCacheValue(final String key,final String value, final Integer timeout, final TimeUnit timeUnit) {
         stringRedisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
 

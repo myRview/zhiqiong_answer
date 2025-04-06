@@ -11,6 +11,7 @@ import com.zhiqiong.model.vo.score.ScoreResultPageVO;
 import com.zhiqiong.model.vo.score.ScoringResultVO;
 import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.service.ScoringResultService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/scoring/result")
-//@Api(tags = "评分结果")
+@Api(tags = "评分结果")
 public class ScoringResultController {
     @Resource
     private ScoringResultService scoringResultService;

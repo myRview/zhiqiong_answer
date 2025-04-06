@@ -11,6 +11,7 @@ import com.zhiqiong.model.vo.app.ReviewAppVO;
 import com.zhiqiong.service.AppService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/app")
-//@Api(tags = "应用管理")
+@Api(tags = "应用管理")
 public class AppController {
     @Resource
     private AppService appService;
@@ -85,6 +86,7 @@ public class AppController {
 
     @PostMapping("/review")
     @ApiOperation(value = "审核应用")
+    @PreAuthorize("@ss.hasPermission('sys:edit')")
     public ResponseResult<Boolean> reviewApp(@RequestBody ReviewAppVO reviewAppVO) {
         boolean update = appService.reviewApp(reviewAppVO);
         return ResponseResult.success(update);

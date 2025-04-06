@@ -79,7 +79,7 @@ public class MyGenerator {
         // 配置数据表的字段与实体类的属性名之间映射的策略
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         //公共字段
-        strategy.setSuperEntityColumns(new String[]{ "create_time", "update_time"});
+//        strategy.setSuperEntityColumns(new String[]{ "create_time", "update_time"});
         // 配置 lombok 模式.实体类加lombok注解
         strategy.setEntityLombokModel(true);
         // 配置 rest 风格的控制器（@RestController）

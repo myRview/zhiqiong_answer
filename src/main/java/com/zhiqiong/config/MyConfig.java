@@ -20,9 +20,6 @@ import javax.annotation.Resource;
 @Configuration
 public class MyConfig implements WebMvcConfigurer {
 
-    @Resource
-    private JwtInterceptor jwtInterceptor;
-
     /**
      * 配置跨域
      */
@@ -46,13 +43,6 @@ public class MyConfig implements WebMvcConfigurer {
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
-
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//            registry.addInterceptor(jwtInterceptor)
-//                    .addPathPatterns("/user/**")
-//                    .excludePathPatterns("/user/login");
-//    }
 
     @Bean
     public ClientV4 clientV4(@Value("${oapi.key}") String key){

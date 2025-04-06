@@ -17,6 +17,7 @@ import com.zhiqiong.manager.oapi.AIService;
 import com.zhiqiong.service.QuestionService;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -36,7 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @RestController
 @RequestMapping("/question")
-//@Api(tags = "题目管理")
+@Api(tags = "题目管理")
 public class QuestionController {
 
     @Resource

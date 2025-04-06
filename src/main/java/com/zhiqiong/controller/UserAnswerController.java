@@ -8,6 +8,7 @@ import com.zhiqiong.model.vo.IdVO;
 import com.zhiqiong.model.vo.answwer.AnswerPageVO;
 import com.zhiqiong.model.vo.answwer.UserAnswerVO;
 import com.zhiqiong.service.UserAnswerService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user/answer")
-//@Api(tags = "用户答题记录")
+@Api(tags = "用户答题记录")
 public class UserAnswerController {
 
     @Resource

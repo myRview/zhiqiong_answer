@@ -93,8 +93,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.21.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
 
-<!--        智谱AI sdk-->
+
+        <!--        智谱AI sdk-->
         <dependency>
             <groupId>cn.bigmodel.openapi</groupId>
             <artifactId>oapi-java-sdk</artifactId>
@@ -113,6 +123,13 @@
 <!--            <groupId>org.springframework.boot</groupId>-->
 <!--            <artifactId>spring-boot-starter-security</artifactId>-->
 <!--        </dependency>-->
+
+
+        <!-- spring security 安全认证 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
 
 
     </dependencies>
