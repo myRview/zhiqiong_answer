@@ -17,13 +17,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseResult<?> businessExceptionHandler(BusinessException e){
-        log.error("BusinessException",e);
+        log.info("BusinessException",e);
+        e.printStackTrace();
         return ResponseResult.fail(e.getCode(),e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseResult<?> businessExceptionHandler(RuntimeException e){
-        log.error("RuntimeException",e);
+        log.info("RuntimeException",e);
+        e.printStackTrace();
         return ResponseResult.fail(ErrorCode.ERROR_SYSTEM,e.getMessage());
     }
 

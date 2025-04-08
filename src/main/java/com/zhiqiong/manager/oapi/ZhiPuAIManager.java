@@ -72,7 +72,8 @@ public class ZhiPuAIManager {
             List<Choice> choices = invokeModelApiResp.getData().getChoices();
             return choices.get(0).getMessage().getContent().toString();
         } catch (Exception e) {
-            log.error("调用智谱AI接口异常", e);
+            e.printStackTrace();
+            log.info("调用智谱AI接口异常", e);
             throw new BusinessException(ErrorCode.ERROR_SYSTEM, "调用智谱AI接口异常");
         }
     }
@@ -111,7 +112,8 @@ public class ZhiPuAIManager {
             ModelApiResponse sseModelApiResp = client.invokeModelApi(chatCompletionRequest);
             return sseModelApiResp.getFlowable();
         } catch (Exception e) {
-            log.error("调用智谱AI接口异常", e);
+            e.printStackTrace();
+            log.info("调用智谱AI接口异常", e);
             throw new BusinessException(ErrorCode.ERROR_SYSTEM, "调用智谱AI接口异常");
         }
     }
@@ -131,7 +133,8 @@ public class ZhiPuAIManager {
             ImageResult data = image.getData();
             url = data.getData().get(0).getUrl();
         } catch (Exception e) {
-            log.error("调用智谱AI接口异常", e);
+            e.printStackTrace();
+            log.info("调用智谱AI接口异常", e);
             throw new BusinessException(ErrorCode.ERROR_SYSTEM, "调用智谱AI接口异常");
         }
         return url;

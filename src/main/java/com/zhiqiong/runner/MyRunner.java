@@ -46,7 +46,8 @@ public class MyRunner implements ApplicationRunner {
                 redisCacheManager.setCacheMap(cacheKey, cacheMap);
                 redisCacheManager.expire(cacheKey, 30, TimeUnit.DAYS);
             } catch (Exception e) {
-                log.error("批量写入Redis失败，数据：{}", cacheMap);
+                e.printStackTrace();
+                log.info("批量写入Redis失败，数据：{}", cacheMap);
             }
         }
     }

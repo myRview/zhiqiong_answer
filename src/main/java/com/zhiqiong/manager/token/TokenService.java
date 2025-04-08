@@ -51,7 +51,8 @@ public class TokenService {
                 }
                 return userDetailVO;
             } catch (Exception e) {
-                log.error("获取登录用户失败", e);
+                e.printStackTrace();
+                log.info("获取登录用户失败", e);
             }
         }
         return null;

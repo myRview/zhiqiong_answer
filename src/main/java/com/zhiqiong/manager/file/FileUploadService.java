@@ -46,12 +46,11 @@ public class FileUploadService {
             //上传文件
 //            imageUrl = cosManager.putImage(filePath,filePath, tempFile);
             imageUrl = cosManager.multipartUpload(filePath, tempFile);
-            log.error("上传成功，返回结果：{}", imageUrl);
+            log.info("上传成功，返回结果：{}", imageUrl);
         } catch (IOException e) {
-            log.error("上传失败", e);
+            e.printStackTrace();
             throw new BusinessException(ErrorCode.ERROR_SYSTEM, "上传失败");
         }
-        log.error("上传文件耗时：{}ms", System.currentTimeMillis() - start);
         return imageUrl;
     }
 }

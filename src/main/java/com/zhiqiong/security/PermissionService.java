@@ -24,7 +24,8 @@ public class PermissionService {
         try {
             loginUser = (UserDetailVO) authentication.getPrincipal();
         } catch (Exception e) {
-            log.error("获取用户信息失败:{}",e);
+            e.printStackTrace();
+            log.info("获取用户信息失败:{}",e);
         }
         if (ObjUtil.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getPermissions()))
         {

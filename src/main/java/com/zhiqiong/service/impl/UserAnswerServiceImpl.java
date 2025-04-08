@@ -107,7 +107,7 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         ThrowExceptionUtil.throwIf(ObjUtil.isNull(user), ErrorCode.ERROR_PARAM, "用户不存在");
 
         List<String> choicesResult = userAnswerVO.getChoicesResult();
-        log.error("用户答案：{}", choicesResult);
+        log.info("用户答案：{}", choicesResult);
         ThrowExceptionUtil.throwIf(CollectionUtil.isEmpty(choicesResult), ErrorCode.ERROR_PARAM, "请选择答案");
 
         AddQuestionVO questionVO = questionService.selectQuestionList(appId);
@@ -138,7 +138,8 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
             this.save(userAnswerEntity);
             return userAnswerVO;
         } catch (DuplicateKeyException e) {
-            log.error("用户答题异常：{}", e.getMessage());
+            e.printStackTrace();
+            log.info("用户答题异常：{}", e.getMessage());
             throw new BusinessException(ErrorCode.ERROR_PARAM,"请勿重复提交");
         }
     }

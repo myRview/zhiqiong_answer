@@ -33,7 +33,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
      */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        log.error("JWT认证失败，无法访问系统资源，请求访问：{},异常信息：{}", request.getRequestURI(),authException.getMessage());
+        log.info("JWT认证失败，无法访问系统资源，请求访问：{},异常信息：{}", request.getRequestURI(),authException.getMessage());
         response.setStatus(HttpStatus.HTTP_OK);
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");

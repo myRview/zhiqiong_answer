@@ -68,7 +68,7 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
         Integer pageNum = pageVO.getPageNum();
         Integer pageSize = pageVO.getPageSize();
         LambdaQueryWrapper<ScoringResultEntity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(StrUtil.isNotBlank(resultName),ScoringResultEntity::getResultName, resultName);
+        queryWrapper.eq(StrUtil.isNotBlank(resultName), ScoringResultEntity::getResultName, resultName);
         queryWrapper.eq(appId != null, ScoringResultEntity::getAppId, appId);
         Page<ScoringResultEntity> page = this.page(new Page<>(pageNum, pageSize), queryWrapper);
         Page<ScoringResultVO> resultPage = new Page<>(pageNum, pageSize, page.getTotal());
@@ -86,7 +86,7 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
         String resultProp = resultVO.getResultProp();
         Integer resultScoreRange = resultVO.getResultScoreRange();
         ScoringResultEntity entity = this.getById(id);
-        ThrowExceptionUtil.throwIf(entity == null, ErrorCode.ERROR_PARAM,"评分id错误");
+        ThrowExceptionUtil.throwIf(entity == null, ErrorCode.ERROR_PARAM, "评分id错误");
         LambdaUpdateWrapper<ScoringResultEntity> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(ScoringResultEntity::getId, id);
         updateWrapper.set(StrUtil.isNotBlank(resultName), ScoringResultEntity::getResultName, resultName);
@@ -118,6 +118,13 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
     }
 
     @Override
+    public List<ScoringResultVO> selectListByAPPId(Long appId) {
+        LambdaQueryWrapper<ScoringResultEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ScoringResultEntity::getAppId, appId);
+        return converterVO(this.list(queryWrapper));
+    }
+
+    @Override
     public ScoringResultVO selectByAppIdAndTypeCode(Long appId, String typeCode) {
         LambdaQueryWrapper<ScoringResultEntity> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ScoringResultEntity::getAppId, appId);
@@ -130,7 +137,7 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
         return records.stream().map(this::converterVO).collect(Collectors.toList());
     }
 
-    private ScoringResultVO converterVO(ScoringResultEntity entity){
+    private ScoringResultVO converterVO(ScoringResultEntity entity) {
         if (entity == null) return null;
         ScoringResultVO vo = new ScoringResultVO();
         BeanUtil.copyProperties(entity, vo);

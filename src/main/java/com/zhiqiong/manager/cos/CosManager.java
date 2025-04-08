@@ -90,7 +90,8 @@ public class CosManager {
         try {
             return cosClient.putObject(request);
         } catch (CosClientException e) {
-            log.error("图片上传失败 | filePath: {}", filePath, e);
+            e.printStackTrace();
+            log.info("图片上传失败 | filePath: {}", filePath, e);
             throw new BusinessException(ErrorCode.ERROR_SYSTEM, "图片上传失败");
         }
     }
@@ -150,7 +151,8 @@ public class CosManager {
             logTransferProgress(upload);
             return upload.waitForUploadResult();
         } catch (CosClientException | InterruptedException e) {
-            log.error("分片上传失败 | filePath: {}", filePath, e);
+            log.info("分片上传失败 | filePath: {}", filePath, e);
+            e.printStackTrace();
             throw new BusinessException(ErrorCode.ERROR_SYSTEM, "文件分片上传失败");
         }
     }

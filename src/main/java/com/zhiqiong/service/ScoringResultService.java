@@ -31,4 +31,6 @@ public interface ScoringResultService extends IService<ScoringResultEntity> {
     ScoringResultVO selectByAppIdAndTypeCode(Long appId, String typeCode);
 
     boolean deleteByAppId(Long appId);
+
+    List<ScoringResultVO> selectListByAPPId(Long appId);
 }
